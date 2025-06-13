@@ -1,0 +1,2173 @@
+<!-- Report Problem Modal -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('reportModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #2e7d4f;">📋 Lapor Masalah</h2>
+            
+            <form onsubmit="handleReport(event)">
+                <div class="form-group">
+                    <label for="reportType">Jenis Masalah</label>
+                    <select id="reportType" required>
+                        <option value="">Pilih jenis masalah</option>
+                        <option value="compost_full">Titik kompos penuh</option>
+                        <option value="equipment_broken">Peralatan rusak</option>
+                        <option value="pickup_needed">Perlu penjemputan</option>
+                        <option value="coordination_issue">Masalah koordinasi</option>
+                        <option value="hygiene_concern">Masalah kebersihan</option>
+                        <option value="other">Lainnya</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reportLocation">Lokasi</label>
+                    <input type="text" id="reportLocation" placeholder="RT/RW atau alamat spesifik" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reportUrgency">Tingkat Urgensi</label>
+                    <select id="reportUrgency" required>
+                        <option value="">Pilih tingkat urgensi</option>
+                        <option value="low">Rendah - Bisa ditunda</option>
+                        <option value="medium">Sedang - Perlu perhatian</option>
+                        <option value="high">Tinggi - Segera ditangani</option>
+                        <option value="critical">Kritis - Emergency</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reportDescription">Deskripsi Masalah</label>
+                    <textarea id="reportDescription" rows="4" placeholder="Jelaskan masalah secara detail..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reportPhoto">Foto Pendukung (Opsional)</label>
+                    <input type="file" id="reportPhoto" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">
+                        📤 Kirim Laporan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Coordinator Contact Modal -->
+    <div id="coordinatorModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('coordinatorModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #2e7d4f;">👥 Hubungi Koordinator</h2>
+            
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Koordinator Area Aktif</h3>
+                
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>Budi Santoso</strong> - RT 03 Menteng
+                            <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="padding: 0.5rem;">💬 Chat</button>
+                            <button class="btn btn-primary" style="padding: 0.5rem;">📞 Call</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>Indra Maulana</strong> - RT 02 Senayan
+                            <div style="color: #666; font-size: 0.9rem;">Koordinator • Away (kembali 30 menit)</div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="padding: 0.5rem;">💬 Chat</button>
+                            <button class="btn btn-secondary" style="padding: 0.5rem; opacity: 0.5;" disabled>📞 Call</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h3 style="margin-bottom: 1rem;">Kirim Pesan Cepat</h3>
+                <form onsubmit="handleCoordinatorMessage(event)">
+                    <div class="form-group">
+                        <label for="coordinatorSelect">Pilih Koordinator</label>
+                        <select id="coordinatorSelect" required>
+                            <option value="">Pilih koordinator</option>
+                            <option value="budi">Budi Santoso - RT 03 Menteng</option>
+                            <option value="sari">Sari Wijaya - RT 07 Fatmawati</option>
+                            <option value="indra">Indra Maulana - RT 02 Senayan</option>
+                            <option value="all">Semua Koordinator Online</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="messageType">Jenis Pesan</label>
+                        <select id="messageType" required>
+                            <option value="">Pilih jenis pesan</option>
+                            <option value="question">Pertanyaan umum</option>
+                            <option value="support">Minta bantuan</option>
+                            <option value="report">Laporan masalah</option>
+                            <option value="suggestion">Saran/masukan</option>
+                            <option value="emergency">Emergency</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="coordinatorMessage">Pesan</label>
+                        <textarea id="coordinatorMessage" rows="4" placeholder="Tulis pesan Anda untuk koordinator..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">
+                            📤 Kirim Pesan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Maps functionality
+        let activeFilters = {
+            compost: true,
+            umkm: true,
+            activity: true,
+            rt: true
+        };
+
+        function toggleFilter(type) {
+            activeFilters[type] = !activeFilters[type];
+            
+            // Update button appearance
+            const button = event.target;
+            button.classList.toggle('active');
+            
+            // Show/hide markers
+            const markers = document.querySelectorAll(`.marker-${type}`);
+            markers.forEach(marker => {
+                marker.style.display = activeFilters[type] ? 'flex' : 'none';
+            });
+            
+            // Update counter in button text
+            updateFilterCounters();
+        }
+
+        function updateFilterCounters() {
+            const buttons = document.querySelectorAll('.filter-button');
+            const counts = {
+                compost: document.querySelectorAll('.marker-compost').length,
+                umkm: document.querySelectorAll('.marker-umkm').length,
+                activity: document.querySelectorAll('.marker-activity').length,
+                rt: document.querySelectorAll('.marker-rt').length
+            };
+            
+            buttons.forEach(button => {
+                const text = button.textContent;
+                Object.keys(counts).forEach(type => {
+                    if (text.includes(type === 'compost' ? 'Kompos' : type === 'umkm' ? 'UMKM' : type === 'activity' ? 'Aktivitas' : 'RT/RW')) {
+                        const visibleCount = activeFilters[type] ? counts[type] : 0;
+                        button.innerHTML = button.innerHTML.replace(/\(\d+\)/, `(${visibleCount})`);
+                    }
+                });
+            });
+        }
+
+        function showTooltip(event, marker) {
+            const tooltip = document.getElementById('mapTooltip');
+            const info = marker.getAttribute('data-info').split('|');
+            
+            tooltip.innerHTML = info.map(line => `<div>${line}</div>`).join('');
+            tooltip.style.display = 'block';
+            tooltip.style.left = (event.pageX + 10) + 'px';
+            tooltip.style.top = (event.pageY - 10) + 'px';
+        }
+
+        function hideTooltip() {
+            document.getElementById('mapTooltip').style.display = 'none';
+        }
+
+        function zoomIn() {
+            const markers = document.querySelectorAll('.map-marker');
+            markers.forEach(marker => {
+                const currentSize = parseInt(marker.style.width) || 30;
+                marker.style.width = marker.style.height = Math.min(50, currentSize + 5) + 'px';
+            });
+        }
+
+        function zoomOut() {
+            const markers = document.querySelectorAll('.map-marker');
+            markers.forEach(marker => {
+                const currentSize = parseInt(marker.style.width) || 30;
+                marker.style.width = marker.style.height = Math.max(20, currentSize - 5) + 'px';
+            });
+        }
+
+        function centerMap() {
+            // Animate to center view
+            const mapCanvas = document.getElementById('mapCanvas');
+            mapCanvas.style.transform = 'scale(1)';
+            
+            // Reset marker positions if needed
+            setTimeout(() => {
+                mapCanvas.style.transform = '';
+            }, 300);
+        }
+
+        function generateReport() {
+            // Simulate report generation
+            const reportData = {
+                totalCompostPoints: 245,
+                activeUMKM: 89,
+                liveActivities: 156,
+                rtCoverage: 45,
+                participationRate: 78,
+                wasteProcessed: '2.3 tons',
+                co2Saved: '0.69 tons'
+            };
+            
+            alert(`📊 LAPORAN KOORDINASI HARIAN\n\n` +
+                  `🌱 Total Titik Kompos: ${reportData.totalCompostPoints}\n` +
+                  `🏪 UMKM Partner Aktif: ${reportData.activeUMKM}\n` +
+                  `📊 Aktivitas Live: ${reportData.liveActivities}\n` +
+                  `🏘️ Coverage RT/RW: ${reportData.rtCoverage}\n` +
+                  `👥 Tingkat Partisipasi: ${reportData.participationRate}%\n` +
+                  `♻️ Sampah Diolah: ${reportData.wasteProcessed}\n` +
+                  `💚 CO₂ Dihemat: ${reportData.co2Saved}\n\n` +
+                  `Laporan lengkap akan dikirim ke email Anda.`);
+        }
+
+        function schedulePickup() {
+            const locations = [
+                'RT 05 Kemang - Taman Warga',
+                'RPTRA Fatmawati',
+                'Sekolah SDN 01',
+                'Pos RT 08 Pancoran'
+            ];
+            
+            const selectedLocation = prompt(
+                `🚛 JADWAL PENJEMPUTAN\n\nPilih lokasi (ketik nomor):\n` +
+                locations.map((loc, index) => `${index + 1}. ${loc}`).join('\n') +
+                `\n\nKetik nomor 1-${locations.length}:`
+            );
+            
+            if (selectedLocation && selectedLocation >= 1 && selectedLocation <= locations.length) {
+                const location = locations[selectedLocation - 1];
+                alert(`✅ Penjemputan terjadwal!\n\n` +
+                      `📍 Lokasi: ${location}\n` +
+                      `🕒 Waktu: Besok, 08:00 WIB\n` +
+                      `🚛 Tim: Truck MuDu #03\n` +
+                      `📱 Tracking: SMS akan dikirim\n\n` +
+                      `Terima kasih atas koordinasinya!`);
+            }
+        }
+
+        function handleReport(event) {
+            event.preventDefault();
+            const reportType = document.getElementById('reportType').value;
+            const location = document.getElementById('reportLocation').value;
+            const urgency = document.getElementById('reportUrgency').value;
+            const description = document.getElementById('reportDescription').value;
+            
+            // Simulate report submission
+            const reportId = 'RPT' + Date.now().toString().slice(-6);
+            
+            alert(`✅ Laporan berhasil dikirim!\n\n` +
+                  `🆔 ID Laporan: ${reportId}\n` +
+                  `📍 Lokasi: ${location}\n` +
+                  `🚨 Prioritas: ${urgency.toUpperCase()}\n` +
+                  `⏱️ Estimasi Penanganan: ${urgency === 'critical' ? '1 jam' : urgency === 'high' ? '4 jam' : urgency === 'medium' ? '24 jam' : '48 jam'}\n\n` +
+                  `Koordinator akan segera menindaklanjuti. Update akan dikirim via SMS/WhatsApp.`);
+            
+            closeModal('reportModal');
+            
+            // Add to activity feed simulation
+            setTimeout(() => {
+                addSystemNotification(`📋 Laporan ${reportId} diterima untuk lokasi ${location}`);
+            }, 1000);
+        }
+
+        function handleCoordinatorMessage(event) {
+            event.preventDefault();
+            const coordinator = document.getElementById('coordinatorSelect').value;
+            const messageType = document.getElementById('messageType').value;
+            const message = document.getElementById('coordinatorMessage').value;
+            
+            const coordinatorNames = {
+                budi: 'Budi Santoso',
+                sari: 'Sari Wijaya', 
+                indra: 'Indra Maulana',
+                all: 'Semua Koordinator'
+            };
+            
+            alert(`📤 Pesan berhasil dikirim!\n\n` +
+                  `👤 Kepada: ${coordinatorNames[coordinator]}\n` +
+                  `📋 Jenis: ${messageType}\n` +
+                  `⏰ Estimasi Balasan: ${coordinator === 'all' ? '30 menit' : '15 menit'}\n\n` +
+                  `Koordinator akan merespons melalui WhatsApp atau platform chat MuDu.`);
+            
+            closeModal('coordinatorModal');
+        }
+
+        function addSystemNotification(message) {
+            const feedMain = document.querySelector('.feed-main');
+            const notification = document.createElement('div');
+            notification.className = 'activity-item';
+            notification.style.background = '#e3f2fd';
+            notification.style.borderLeft = '4px solid #2196f3';
+            notification.innerHTML = `
+                <div class="activity-avatar" style="background: #2196f3;">🔔</div>
+                <div class="activity-content">
+                    <div class="activity-header">${message}</div>
+                    <div class="activity-stats">
+                        <span>📍 Sistem MuDu</span>
+                        <span>⏰ Baru saja</span>
+                    </div>
+                </div>
+            `;
+            feedMain.insertBefore(notification, feedMain.firstChild);
+        }
+
+        // Real-time updates simulation
+        setInterval(() => {
+            // Update live statistics randomly
+            const liveStats = document.querySelectorAll('.maps-controls .control-section:last-child div[style*="font-size: 1.5rem"]');
+            liveStats.forEach((stat, index) => {
+                const currentValue = parseInt(stat.textContent);
+                if (index === 0) { // Activities
+                    stat.textContent = Math.max(100, currentValue + Math.floor(Math.random() * 5 - 2));
+                } else if (index === 2) { // Coverage percentage
+                    const newValue = Math.min(100, Math.max(70, currentValue + Math.floor(Math.random() * 3 - 1)));
+                    stat.textContent = newValue + '%';
+                }
+            });
+            
+            // Occasionally add new activities to feed
+            if (Math.random() < 0.3) {
+                const activities = [
+                    'RT 05 mencapai target mingguan! 🎯',
+                    'Koordinator baru bergabung di RT 09 👋',
+                    'Pickup berhasil dilakukan di 3 lokasi ✅',
+                    'Workshop kompos dimulai di RPTRA 🎓',
+                    'UMKM partner baru: EcoGreen Solutions 🏪'
+                ];
+                const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+                addSystemNotification(randomActivity);
+            }
+        }, 45000); // Update every 45 seconds
+
+        // Marker animation for live activities
+        setInterval(() => {
+            const activityMarkers = document.querySelectorAll('.marker-activity');
+            activityMarkers.forEach(marker => {
+                marker.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    marker.style.transform = 'scale(1)';
+                }, 500);
+            });
+        }, 3000); // Pulse every 3 seconds
+
+        // Add map interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            const mapCanvas = document.getElementById('mapCanvas');
+            let isDragging = false;
+            let startX, startY, scrollLeft, scrollTop;
+
+            // Add drag functionality to map
+            mapCanvas.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.pageX - mapCanvas.offsetLeft;
+                startY = e.pageY - mapCanvas.offsetTop;
+                scrollLeft = mapCanvas.scrollLeft;
+                scrollTop = mapCanvas.scrollTop;
+                mapCanvas.style.cursor = 'grabbing';
+            });
+
+            mapCanvas.addEventListener('mouseleave', () => {
+                isDragging = false;
+                mapCanvas.style.cursor = 'grab';
+            });
+
+            mapCanvas.addEventListener('mouseup', () => {
+                isDragging = false;
+                mapCanvas.style.cursor = 'grab';
+            });
+
+            mapCanvas.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const x = e.pageX - mapCanvas.offsetLeft;
+                const y = e.pageY - mapCanvas.offsetTop;
+                const walkX = (x - startX) * 2;
+                const walkY = (y - startY) * 2;
+                mapCanvas.scrollLeft = scrollLeft - walkX;
+                mapCanvas.scrollTop = scrollTop - walkY;
+            });
+
+            // Add click handlers for markers
+            document.querySelectorAll('.map-marker').forEach(marker => {
+                marker.addEventListener('click', function() {
+                    const info = this.getAttribute('data-info').split('|');
+                    const markerType = this.classList.contains('marker-compost') ? 'Compost Point' :
+                                     this.classList.contains('marker-umkm') ? 'UMKM Partner' :
+                                     this.classList.contains('marker-activity') ? 'Live Activity' : 'RT/RW Info';
+                    
+                    alert(`📍 ${markerType}\n\n${info.join('\n')}\n\n💡 Klik kanan untuk opsi lanjutan`);
+                });
+                
+                marker.addEventListener('contextmenu', function(e) {
+                    e.preventDefault();
+                    const actions = [
+                        '📍 Lihat Detail',
+                        '📞 Hubungi PIC',
+                        '📋 Lapor Masalah',
+                        '🗺️ Petunjuk Arah',
+                        '📊 Lihat Statistik'
+                    ];
+                    
+                    const choice = prompt(`Pilih aksi untuk marker ini:\n\n${actions.map((action, i) => `${i+1}. ${action}`).join('\n')}\n\nKetik nomor 1-5:`);
+                    
+                    if (choice && choice >= 1 && choice <= 5) {
+                        alert(`✅ ${actions[choice-1]} akan dibuka di tab baru!`);
+                    }
+                });
+            });
+        });
+    </script>="color: #666; font-size: 0.9rem;">Koordinator Senior • Online</div>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-secondary" style="padding: 0.5rem;">💬 Chat</button>
+                            <button class="btn btn-primary" style="padding: 0.5rem;">📞 Call</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>Sari Wijaya</strong> - RT 07 Fatmawati
+                            <div style="color: #666; font-size: 0.9rem;">Koordinator • Online</div>
+                        </div>
+                        <div style<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MuDu - Track, Reduce, Impact | Platform Keberlanjutan Jakarta</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #2e7d4f, #4caf50);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: #ff6b35;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: #2e7d4f;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #2e7d4f, #4caf50);
+            color: white;
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #2e7d4f;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #2e7d4f;
+        }
+        
+        /* Activity Feed */
+        .activity-feed {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        
+        .feed-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 2rem;
+        }
+        
+        .feed-main {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+        
+        .activity-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4caf50, #2e7d4f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-header {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .activity-stats {
+            display: flex;
+            gap: 1rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .activity-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .kudos-btn {
+            background: none;
+            border: none;
+            color: #ff6b35;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .sidebar-widget {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .widget-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #2e7d4f;
+        }
+        
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+        
+        .rank {
+            font-weight: bold;
+            color: #ff6b35;
+        }
+        
+        /* Impact Dashboard */
+        .impact-dashboard {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .impact-card {
+            background: linear-gradient(135deg, #4caf50, #2e7d4f);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .impact-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .impact-label {
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        .impact-comparison {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+        
+        /* UMKM Section */
+        .umkm-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        
+        .umkm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .umkm-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .umkm-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .umkm-image {
+            height: 200px;
+            background: linear-gradient(135deg, #4caf50, #2e7d4f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+        
+        .umkm-content {
+            padding: 1.5rem;
+        }
+        
+        .umkm-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2e7d4f;
+        }
+        
+        .umkm-rating {
+            color: #ff6b35;
+            margin-bottom: 1rem;
+        }
+        
+        /* Maps Section */
+        .maps-section {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .maps-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            height: 600px;
+        }
+        
+        .maps-controls {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+        
+        .map-display {
+            background: #e8f5e8;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .map-canvas {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #e8f5e8 25%, #f0f8f0 25%, #f0f8f0 50%, #e8f5e8 50%, #e8f5e8 75%, #f0f8f0 75%);
+            background-size: 20px 20px;
+            position: relative;
+        }
+        
+        .map-marker {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .map-marker:hover {
+            transform: scale(1.2);
+            z-index: 10;
+        }
+        
+        .marker-compost {
+            background: #4caf50;
+        }
+        
+        .marker-umkm {
+            background: #ff6b35;
+        }
+        
+        .marker-activity {
+            background: #2196f3;
+            animation: pulse 2s infinite;
+        }
+        
+        .marker-rt {
+            background: #9c27b0;
+            width: 40px;
+            height: 40px;
+            font-size: 0.8rem;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .control-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        .control-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2e7d4f;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-button {
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        
+        .filter-button.active {
+            border-color: #4caf50;
+            background: #e8f5e8;
+            color: #2e7d4f;
+        }
+        
+        .filter-button:hover {
+            border-color: #4caf50;
+        }
+        
+        .rt-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+        
+        .status-active { background: #4caf50; }
+        .status-warning { background: #ff9800; }
+        .status-inactive { background: #f44336; }
+        
+        .map-tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 0.5rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            z-index: 100;
+            display: none;
+        }
+        
+        .map-legend {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background: rgba(255,255,255,0.95);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+        }
+        
+        .zoom-controls {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .zoom-btn {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .zoom-btn:hover {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+        
+        /* Challenges Section */
+        .challenges {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        
+        .challenge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .challenge-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .challenge-card:hover {
+            border-color: #4caf50;
+            transform: translateY(-3px);
+        }
+        
+        .challenge-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .challenge-participants {
+            color: #666;
+            margin-top: 1rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: #2e7d4f;
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .footer-section h3 {
+            margin-bottom: 1rem;
+        }
+        
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer-section a:hover {
+            opacity: 0.8;
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            opacity: 0.8;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .feed-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: -1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <a href="#" class="logo">🌱 MuDu</a>
+            <ul class="nav-links">
+                <li><a href="#features">Fitur</a></li>
+                <li><a href="#maps">Peta Koordinasi</a></li>
+                <li><a href="#impact">Dampak</a></li>
+                <li><a href="#umkm">UMKM</a></li>
+                <li><a href="#challenges">Tantangan</a></li>
+                <li><a href="#about">Tentang</a></li>
+            </ul>
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-secondary" onclick="openModal('loginModal')">Masuk</a>
+                <a href="#" class="btn btn-primary" onclick="openModal('signupModal')">Mulai Gratis</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Track, Reduce, Impact</h1>
+            <p>Bergabunglah dengan lebih dari 50,000 eco-warriors yang mengurangi krisis sampah Jakarta</p>
+            
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">2,500</span>
+                    <div class="stat-label">Ton Sampah Diolah</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">50K+</span>
+                    <div class="stat-label">Eco-Warriors Aktif</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">1,200</span>
+                    <div class="stat-label">Partner UMKM</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">85%</span>
+                    <div class="stat-label">Pengurangan Emisi CO₂</div>
+                </div>
+            </div>
+            
+            <a href="#" class="btn btn-primary" onclick="openModal('signupModal')" style="font-size: 1.2rem; padding: 1rem 2rem;">
+                🚀 Mulai Dampak Nyata Sekarang
+            </a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Fitur Unggulan MuDu</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Smart Impact Tracking</h3>
+                    <p>Catat aktivitas kompos harian dengan detail analisis dampak lingkungan dan CO₂ yang dihemat</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Eco-Leaderboards</h3>
+                    <p>Kompetisi sehat antar RT/RW untuk menjadi Compost King/Queen dengan ranking real-time</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Compost Point Mapping</h3>
+                    <p>Temukan titik kompos terdekat, partner UMKM terpercaya, dan komunitas eco-warriors di sekitar Anda</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Community Challenges</h3>
+                    <p>Ikuti tantangan sustainability bulanan dan raih achievement bersama tetangga sekitar</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3>Interactive Learning</h3>
+                    <p>Tutorial kompos interaktif, webinar expert, dan konten edukatif untuk maximize impact</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛍️</div>
+                    <h3>UMKM Marketplace</h3>
+                    <p>Akses langsung ke peralatan kompos berkualitas dari UMKM partner terpercaya</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Maps Section -->
+    <section class="maps-section" id="maps">
+        <div class="container">
+            <h2 class="section-title">🗺️ Peta Koordinasi Jakarta</h2>
+            <p style="text-align: center; margin-bottom: 2rem; color: #666;">
+                Kontrol dan koordinasi aktivitas sustainability real-time di seluruh Jakarta
+            </p>
+            
+            <div class="maps-container">
+                <!-- Maps Controls -->
+                <div class="maps-controls">
+                    <div class="control-section">
+                        <div class="control-title">🎛️ Filter Tampilan</div>
+                        <button class="filter-button active" onclick="toggleFilter('compost')">
+                            🌱 Titik Kompos (245)
+                        </button>
+                        <button class="filter-button active" onclick="toggleFilter('umkm')">
+                            🏪 Partner UMKM (89)
+                        </button>
+                        <button class="filter-button active" onclick="toggleFilter('activity')">
+                            📊 Aktivitas Live (156)
+                        </button>
+                        <button class="filter-button active" onclick="toggleFilter('rt')">
+                            🏘️ Coverage RT/RW (45)
+                        </button>
+                    </div>
+                    
+                    <div class="control-section">
+                        <div class="control-title">📍 Status RT/RW</div>
+                        <div class="rt-status">
+                            <span><div class="status-indicator status-active"></div>RT 05 Kemang</span>
+                            <span style="color: #4caf50;">95%</span>
+                        </div>
+                        <div class="rt-status">
+                            <span><div class="status-indicator status-active"></div>RT 03 Menteng</span>
+                            <span style="color: #4caf50;">88%</span>
+                        </div>
+                        <div class="rt-status">
+                            <span><div class="status-indicator status-warning"></div>RT 07 Fatmawati</span>
+                            <span style="color: #ff9800;">65%</span>
+                        </div>
+                        <div class="rt-status">
+                            <span><div class="status-indicator status-active"></div>RT 02 Senayan</span>
+                            <span style="color: #4caf50;">92%</span>
+                        </div>
+                        <div class="rt-status">
+                            <span><div class="status-indicator status-warning"></div>RT 04 Kuningan</span>
+                            <span style="color: #ff9800;">58%</span>
+                        </div>
+                        <div class="rt-status">
+                            <span><div class="status-indicator status-inactive"></div>RT 08 Pancoran</span>
+                            <span style="color: #f44336;">35%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <div class="control-title">⚡ Quick Actions</div>
+                        <button class="filter-button" onclick="openModal('reportModal')">
+                            📋 Lapor Masalah
+                        </button>
+                        <button class="filter-button" onclick="openModal('coordinatorModal')">
+                            👥 Hubungi Koordinator
+                        </button>
+                        <button class="filter-button" onclick="generateReport()">
+                            📊 Generate Report
+                        </button>
+                        <button class="filter-button" onclick="schedulePickup()">
+                            🚛 Jadwal Pickup
+                        </button>
+                    </div>
+                    
+                    <div class="control-section">
+                        <div class="control-title">📈 Live Statistics</div>
+                        <div style="background: white; padding: 1rem; border-radius: 8px; text-align: center;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #4caf50;">156</div>
+                            <div style="font-size: 0.9rem; color: #666;">Aktivitas Hari Ini</div>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 8px; text-align: center; margin-top: 0.5rem;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #ff6b35;">2.3 Ton</div>
+                            <div style="font-size: 0.9rem; color: #666;">Sampah Diolah</div>
+                        </div>
+                        <div style="background: white; padding: 1rem; border-radius: 8px; text-align: center; margin-top: 0.5rem;">
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #2196f3;">89%</div>
+                            <div style="font-size: 0.9rem; color: #666;">Coverage Area</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Map Display -->
+                <div class="map-display">
+                    <div class="map-canvas" id="mapCanvas">
+                        <!-- Zoom Controls -->
+                        <div class="zoom-controls">
+                            <button class="zoom-btn" onclick="zoomIn()">+</button>
+                            <button class="zoom-btn" onclick="zoomOut()">−</button>
+                            <button class="zoom-btn" onclick="centerMap()" title="Center Map">⌂</button>
+                        </div>
+                        
+                        <!-- Map Markers (dynamically positioned) -->
+                        <div class="map-marker marker-compost" style="top: 15%; left: 25%;" data-info="Taman RT 05 Kemang|Status: Aktif|Kapasitas: 85%|Last Update: 2 jam lalu" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">🌱</div>
+                        <div class="map-marker marker-umkm" style="top: 30%; left: 40%;" data-info="Kompos Organik Nusantara|Rating: 4.9/5|Distance: 0.8km|Contact: 0812-xxxx-xxxx" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">🏪</div>
+                        <div class="map-marker marker-activity" style="top: 45%; left: 60%;" data-info="Live Activity: Sarah R.|Action: Composting 5kg|Time: 15 menit lalu|Impact: 1.5kg CO₂ saved" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">📊</div>
+                        <div class="map-marker marker-rt" style="top: 20%; left: 70%;" data-info="RT 03 Menteng|Population: 245 KK|Participation: 88%|Coordinator: Budi S." onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">RT03</div>
+                        
+                        <div class="map-marker marker-compost" style="top: 60%; left: 20%;" data-info="RPTRA Fatmawati|Status: Aktif|Kapasitas: 92%|Jam Operasi: 06:00-18:00" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">🌱</div>
+                        <div class="map-marker marker-umkm" style="top: 35%; left: 80%;" data-info="EcoTech Solutions|Rating: 4.8/5|Speciality: Smart Composting|Available: Ya" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">🏪</div>
+                        <div class="map-marker marker-activity" style="top: 70%; left: 50%;" data-info="Live Activity: RT 07 Team|Action: Community Cleanup|Participants: 23 orang|Status: In Progress" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">📊</div>
+                        <div class="map-marker marker-rt" style="top: 55%; left: 75%;" data-info="RT 07 Fatmawati|Population: 189 KK|Participation: 65%|Coordinator: Sari W." onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">RT07</div>
+                        
+                        <div class="map-marker marker-compost" style="top: 80%; left: 30%;" data-info="Sekolah SDN 01|Status: Maintenance|Issue: Perlu Cleaning|Contact: Pak Joko" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">🌱</div>
+                        <div class="map-marker marker-umkm" style="top: 25%; left: 55%;" data-info="Green Living Jakarta|Rating: 4.7/5|Service: Training & Equipment|Next Available: Besok" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">🏪</div>
+                        <div class="map-marker marker-activity" style="top: 40%; left: 35%;" data-info="Live Activity: Dini P.|Action: Tutorial Sharing|Viewers: 45 online|Topic: Kompos Cepat 14 Hari" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">📊</div>
+                        <div class="map-marker marker-rt" style="top: 65%; left: 65%;" data-info="RT 02 Senayan|Population: 298 KK|Participation: 92%|Coordinator: Indra M." onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">RT02</div>
+                        
+                        <!-- More markers for realistic density -->
+                        <div class="map-marker marker-compost" style="top: 50%; left: 15%;" data-info="Pos RT 08|Status: Penuh|Perlu Pickup: Urgent|Kapasitas: 100%" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">🌱</div>
+                        <div class="map-marker marker-activity" style="top: 75%; left: 40%;" data-info="Live Activity: Workshop RT 04|Topic: Advanced Composting|Participants: 12 orang|Duration: 2 jam" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">📊</div>
+                        <div class="map-marker marker-rt" style="top: 35%; left: 15%;" data-info="RT 04 Kuningan|Population: 156 KK|Participation: 58%|Status: Butuh Support" onmouseover="showTooltip(event, this)" onmouseout="hideTooltip()">RT04</div>
+                        
+                        <!-- Tooltip -->
+                        <div class="map-tooltip" id="mapTooltip"></div>
+                        
+                        <!-- Map Legend -->
+                        <div class="map-legend">
+                            <div style="font-weight: bold; margin-bottom: 0.5rem;">Legend</div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #4caf50;"></div>
+                                <span>Titik Kompos</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #ff6b35;"></div>
+                                <span>Partner UMKM</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #2196f3;"></div>
+                                <span>Aktivitas Live</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #9c27b0;"></div>
+                                <span>Coverage RT/RW</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Map Analytics Dashboard -->
+            <div style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2rem; color: #4caf50;">245</div>
+                    <div style="color: #666;">Total Compost Points</div>
+                    <div style="font-size: 0.8rem; color: #4caf50;">↑ +12 minggu ini</div>
+                </div>
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2rem; color: #ff6b35;">89</div>
+                    <div style="color: #666;">Active UMKM Partners</div>
+                    <div style="font-size: 0.8rem; color: #4caf50;">↑ +7 bulan ini</div>
+                </div>
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2rem; color: #2196f3;">45</div>
+                    <div style="color: #666;">RT/RW Coverage</div>
+                    <div style="font-size: 0.8rem; color: #4caf50;">↑ +8 area baru</div>
+                </div>
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2rem; color: #9c27b0;">78%</div>
+                    <div style="color: #666;">Avg Participation</div>
+                    <div style="font-size: 0.8rem; color: #4caf50;">↑ +5% bulan ini</div>
+                </div>
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2rem; color: #607d8b;">156</div>
+                    <div style="color: #666;">Live Activities</div>
+                    <div style="font-size: 0.8rem; color: #4caf50;">Real-time</div>
+                </div>
+                <div style="background: white; padding: 1.5rem; border-radius: 10px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                    <div style="font-size: 2rem; color: #795548;">23</div>
+                    <div style="color: #666;">Coordinators Online</div>
+                    <div style="font-size: 0.8rem; color: #4caf50;">Ready to help</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Activity Feed -->
+    <section class="activity-feed">
+        <div class="container">
+            <h2 class="section-title">Impact Feed Real-time</h2>
+            <div class="feed-container">
+                <div class="feed-main">
+                    <div class="activity-item">
+                        <div class="activity-avatar">SR</div>
+                        <div class="activity-content">
+                            <div class="activity-header">Sarah Rahmawati mencapai milestone 50kg kompos! 🏆</div>
+                            <div class="activity-stats">
+                                <span>📍 RT 05, Kemang</span>
+                                <span>💚 15.2kg CO₂ dihemat</span>
+                                <span>⏰ 2 jam lalu</span>
+                            </div>
+                            <div class="activity-actions">
+                                <button class="kudos-btn">💚 25 Eco-Kudos</button>
+                                <button class="kudos-btn">💬 8 komentar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-avatar">RT</div>
+                        <div class="activity-content">
+                            <div class="activity-header">RT 05 meraih juara 1 Zero Waste Challenge Februari! 🥇</div>
+                            <div class="activity-stats">
+                                <span>📍 Kelurahan Kemang</span>
+                                <span>♻️ 500kg sampah diolah</span>
+                                <span>⏰ 5 jam lalu</span>
+                            </div>
+                            <div class="activity-actions">
+                                <button class="kudos-btn">💚 89 Eco-Kudos</button>
+                                <button class="kudos-btn">💬 23 komentar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-avatar">DP</div>
+                        <div class="activity-content">
+                            <div class="activity-header">Dini Pratiwi berbagi tips kompos cepat dalam 14 hari 📚</div>
+                            <div class="activity-stats">
+                                <span>📍 RT 03, Menteng</span>
+                                <span>🎓 Tutorial Kompos</span>
+                                <span>⏰ 1 hari lalu</span>
+                            </div>
+                            <div class="activity-actions">
+                                <button class="kudos-btn">💚 42 Eco-Kudos</button>
+                                <button class="kudos-btn">💬 15 komentar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-avatar">BA</div>
+                        <div class="activity-content">
+                            <div class="activity-header">Budi Santoso menyelesaikan 30-day composting streak! 🔥</div>
+                            <div class="activity-stats">
+                                <span>📍 RT 07, Fatmawati</span>
+                                <span>💚 42.5kg CO₂ dihemat</span>
+                                <span>⏰ 2 hari lalu</span>
+                            </div>
+                            <div class="activity-actions">
+                                <button class="kudos-btn">💚 67 Eco-Kudos</button>
+                                <button class="kudos-btn">💬 19 komentar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="sidebar">
+                    <div class="sidebar-widget">
+                        <div class="widget-title">🏆 RT Eco-Champions</div>
+                        <div class="leaderboard-item">
+                            <span><span class="rank">1.</span> RT 05 Kemang</span>
+                            <span>🌱 850kg</span>
+                        </div>
+                        <div class="leaderboard-item">
+                            <span><span class="rank">2.</span> RT 03 Menteng</span>
+                            <span>🌱 742kg</span>
+                        </div>
+                        <div class="leaderboard-item">
+                            <span><span class="rank">3.</span> RT 07 Fatmawati</span>
+                            <span>🌱 698kg</span>
+                        </div>
+                        <div class="leaderboard-item">
+                            <span><span class="rank">4.</span> RT 02 Senayan</span>
+                            <span>🌱 634kg</span>
+                        </div>
+                        <div class="leaderboard-item">
+                            <span><span class="rank">5.</span> RT 04 Kuningan</span>
+                            <span>🌱 589kg</span>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-widget">
+                        <div class="widget-title">🎯 Challenge Bulan Ini</div>
+                        <h4>Zero Waste Maret</h4>
+                        <p>Target: Kurangi sampah rumah tangga 60%</p>
+                        <div style="background: #e8f5e8; border-radius: 10px; padding: 10px; margin: 10px 0;">
+                            <div style="background: #4caf50; height: 8px; border-radius: 4px; width: 73%;"></div>
+                            <small>73% tercapai • 8 hari tersisa</small>
+                        </div>
+                        <a href="#" class="btn btn-primary" style="width: 100%;">Ikut Challenge</a>
+                    </div>
+                    
+                    <div class="sidebar-widget">
+                        <div class="widget-title">🗺️ Compost Points Terdekat</div>
+                        <div style="font-size: 0.9rem; line-height: 1.4;">
+                            <div style="margin-bottom: 10px;">
+                                <strong>📍 Taman RT 05</strong><br>
+                                <span style="color: #666;">0.2km • Buka 24 jam</span>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <strong>📍 RPTRA Kemang</strong><br>
+                                <span style="color: #666;">0.5km • 06:00-18:00</span>
+                            </div>
+                            <div>
+                                <strong>📍 Sekolah SDN 01</strong><br>
+                                <span style="color: #666;">0.8km • 07:00-15:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Dashboard -->
+    <section class="impact-dashboard" id="impact">
+        <div class="container">
+            <h2 class="section-title">Dampak Nyata Jakarta Bersama</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <span class="impact-value">2,547</span>
+                    <div class="impact-label">Ton Sampah Diolah</div>
+                    <div class="impact-comparison">Setara tinggi Monas × 1.5</div>
+                </div>
+                <div class="impact-card">
+                    <span class="impact-value">1,200</span>
+                    <div class="impact-label">Ton CO₂ Dicegah</div>
+                    <div class="impact-comparison">= 5,200 mobil off road/hari</div>
+                </div>
+                <div class="impact-card">
+                    <span class="impact-value">45,000</span>
+                    <div class="impact-label">Keluarga Terdampak</div>
+                    <div class="impact-comparison">Across 15 Kelurahan Jakarta</div>
+                </div>
+                <div class="impact-card">
+                    <span class="impact-value">₹2.5M</span>
+                    <div class="impact-label">Nilai Ekonomi UMKM</div>
+                    <div class="impact-comparison">Revenue generated for partners</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- UMKM Section -->
+    <section class="umkm-section" id="umkm">
+        <div class="container">
+            <h2 class="section-title">Partner UMKM Terpercaya</h2>
+            <div class="umkm-grid">
+                <div class="umkm-card">
+                    <div class="umkm-image">🧪</div>
+                    <div class="umkm-content">
+                        <div class="umkm-name">Kompos Organik Nusantara</div>
+                        <div class="umkm-rating">⭐⭐⭐⭐⭐ 4.9 (234 reviews)</div>
+                        <p>Spesialis peralatan kompos rumahan dan industrial. Gratis konsultasi setup.</p>
+                        <a href="#" class="btn btn-primary">Lihat Produk</a>
+                    </div>
+                </div>
+                
+                <div class="umkm-card">
+                    <div class="umkm-image">🏭</div>
+                    <div class="umkm-content">
+                        <div class="umkm-name">EcoTech Solutions</div>
+                        <div class="umkm-rating">⭐⭐⭐⭐⭐ 4.8 (156 reviews)</div>
+                        <p>Teknologi kompos modern dengan monitoring digital dan garansi hasil.</p>
+                        <a href="#" class="btn btn-primary">Lihat Produk</a>
+                    </div>
+                </div>
+                
+                <div class="umkm-card">
+                    <div class="umkm-image">🌿</div>
+                    <div class="umkm-content">
+                        <div class="umkm-name">Green Living Jakarta</div>
+                        <div class="umkm-rating">⭐⭐⭐⭐⭐ 4.7 (189 reviews)</div>
+                        <p>Paket lengkap kompos komunitas dengan training dan maintenance support.</p>
+                        <a href="#" class="btn btn-primary">Lihat Produk</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Challenges Section -->
+    <section class="challenges" id="challenges">
+        <div class="container">
+            <h2 class="section-title">Tantangan Komunitas Aktif</h2>
+            <div class="challenge-grid">
+                <div class="challenge-card">
+                    <div class="challenge-icon">🏆</div>
+                    <h3>Zero Waste Maret</h3>
+                    <p>Kurangi sampah rumah tangga hingga 60% selama bulan Maret</p>
+                    <div class="challenge-participants">2,340 participants</div>
+                    <a href="#" class="btn btn-primary">Join Challenge</a>
+                </div>
+                
+                <div class="challenge-card">
+                    <div class="challenge-icon">🌱</div>
+                    <h3>Compost Master April</h3>
+                    <p>Produksi minimal 20kg kompos berkualitas dalam 30 hari</p>
+                    <div class="challenge-participants">1,850 participants</div>
+                    <a href="#" class="btn btn-primary">Join Challenge</a>
+                </div>
+                
+                <div class="challenge-card">
+                    <div class="challenge-icon">🏘️</div>
+                    <h3>RT Green Heroes</h3>
+                    <p>Kompetisi antar RT untuk pencapaian sustainability terbaik</p>
+                    <div class="challenge-participants">156 RT participating</div>
+                    <a href="#" class="btn btn-primary">Join Challenge</a>
+                </div>
+                
+                <div class="challenge-card">
+                    <div class="challenge-icon">📚</div>
+                    <h3>Eco-Education Week</h3>
+                    <p>Selesaikan 5 modul pembelajaran sustainability dan dapatkan sertifikat</p>
+                    <div class="challenge-participants">3,420 learners</div>
+                    <a href="#" class="btn btn-primary">Start Learning</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section style="background: linear-gradient(135deg, #2e7d4f, #4caf50); color: white; padding: 80px 0; text-align: center;">
+        <div class="container">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Siap Jadi Bagian Solusi?</h2>
+            <p style="font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9;">
+                Bergabung dengan 50,000+ eco-warriors yang sudah membuat dampak nyata untuk Jakarta
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="#" class="btn btn-primary" onclick="openModal('signupModal')" style="font-size: 1.1rem; padding: 1rem 2rem;">
+                    🚀 Mulai Dampak Sekarang
+                </a>
+                <a href="#" class="btn btn-secondary" style="font-size: 1.1rem; padding: 1rem 2rem;">
+                    📱 Download Mobile App
+                </a>
+            </div>
+            
+            <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap;">
+                <div>
+                    <strong style="font-size: 1.5rem; display: block;">100% Gratis</strong>
+                    <span style="opacity: 0.8;">Mulai tanpa biaya</span>
+                </div>
+                <div>
+                    <strong style="font-size: 1.5rem; display: block;">50K+ Users</strong>
+                    <span style="opacity: 0.8;">Komunitas aktif</span>
+                </div>
+                <div>
+                    <strong style="font-size: 1.5rem; display: block;">1,200+ UMKM</strong>
+                    <span style="opacity: 0.8;">Partner terpercaya</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="about">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>🌱 MuDu</h3>
+                    <p>Platform sustainability #1 Jakarta yang menghubungkan komunitas, UMKM, dan pemerintah untuk solusi waste management berkelanjutan.</p>
+                    <div style="margin-top: 1rem;">
+                        <a href="#" style="margin-right: 1rem;">📱 iOS App</a>
+                        <a href="#" style="margin-right: 1rem;">🤖 Android App</a>
+                        <a href="#">💻 Web Platform</a>
+                    </div>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Platform</h3>
+                    <a href="#">Impact Tracking</a>
+                    <a href="#">Community Challenges</a>
+                    <a href="#">UMKM Marketplace</a>
+                    <a href="#">Educational Content</a>
+                    <a href="#">Compost Point Maps</a>
+                    <a href="#">Premium Features</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Komunitas</h3>
+                    <a href="#">RT/RW Leaderboards</a>
+                    <a href="#">Eco-Warriors Groups</a>
+                    <a href="#">Expert Consultations</a>
+                    <a href="#">Sustainability Events</a>
+                    <a href="#">Partner Network</a>
+                    <a href="#">Success Stories</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Dukungan</h3>
+                    <a href="#">Help Center</a>
+                    <a href="#">Getting Started Guide</a>
+                    <a href="#">UMKM Partnership</a>
+                    <a href="#">Government Relations</a>
+                    <a href="#">Developer API</a>
+                    <a href="#">Contact Support</a>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Perusahaan</h3>
+                    <a href="#">Tentang MuDu</a>
+                    <a href="#">Impact Report</a>
+                    <a href="#">Karir</a>
+                    <a href="#">Press Kit</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 MuDu Platform. Made with 💚 for sustainable Jakarta. All rights reserved.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                    🏆 Winner of Jakarta Smart City Innovation Award 2025 | 🌱 Certified B-Corp | 🤝 Trusted by 15 Kelurahan
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('loginModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #2e7d4f;">Masuk ke MuDu</h2>
+            
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginEmail">Email atau Username</label>
+                    <input type="text" id="loginEmail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">
+                        🚀 Masuk & Mulai Impact
+                    </button>
+                </div>
+            </form>
+            
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <p>Belum punya akun? <a href="#" onclick="closeModal('loginModal'); openModal('signupModal')" style="color: #4caf50; font-weight: bold;">Daftar Gratis</a></p>
+                <p><a href="#" style="color: #666;">Lupa Password?</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signupModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('signupModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #2e7d4f;">Join 50K+ Eco-Warriors</h2>
+            
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label for="signupName">Nama Lengkap</label>
+                    <input type="text" id="signupName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input type="email" id="signupEmail" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupLocation">Lokasi (RT/RW/Kelurahan)</label>
+                    <input type="text" id="signupLocation" placeholder="Contoh: RT 05/RW 02, Kemang" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupGoal">Tujuan Sustainability</label>
+                    <select id="signupGoal" required>
+                        <option value="">Pilih tujuan utama Anda</option>
+                        <option value="reduce_waste">Kurangi sampah rumah tangga</option>
+                        <option value="learn_composting">Belajar teknik composting</option>
+                        <option value="community_impact">Membantu dampak komunitas</option>
+                        <option value="environmental_education">Edukasi lingkungan keluarga</option>
+                        <option value="umkm_partnership">Partnership dengan UMKM</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input type="password" id="signupPassword" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" required> 
+                        Saya setuju dengan <a href="#" style="color: #4caf50;">Terms of Service</a> dan <a href="#" style="color: #4caf50;">Privacy Policy</a>
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">
+                        🌱 Mulai Dampak Sustainability
+                    </button>
+                </div>
+            </form>
+            
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <p>Sudah punya akun? <a href="#" onclick="closeModal('signupModal'); openModal('loginModal')" style="color: #4caf50; font-weight: bold;">Masuk Sekarang</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Log Activity Modal -->
+    <div id="logActivityModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('logActivityModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #2e7d4f;">Catat Aktivitas Kompos</h2>
+            
+            <form onsubmit="handleLogActivity(event)">
+                <div class="form-group">
+                    <label for="activityType">Jenis Aktivitas</label>
+                    <select id="activityType" required>
+                        <option value="">Pilih jenis aktivitas</option>
+                        <option value="composting">Composting</option>
+                        <option value="waste_sorting">Pemilahan Sampah</option>
+                        <option value="educational_activity">Kegiatan Edukasi</option>
+                        <option value="community_cleanup">Bersih-bersih Komunitas</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wasteAmount">Jumlah Sampah (kg)</label>
+                    <input type="number" id="wasteAmount" step="0.1" min="0" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wasteType">Jenis Sampah</label>
+                    <select id="wasteType" required>
+                        <option value="">Pilih jenis sampah</option>
+                        <option value="organic">Organik (sisa makanan, daun)</option>
+                        <option value="paper">Kertas</option>
+                        <option value="plastic">Plastik</option>
+                        <option value="mixed">Campuran</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="activityPhoto">Foto Aktivitas (Opsional)</label>
+                    <input type="file" id="activityPhoto" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <label for="activityNotes">Catatan</label>
+                    <textarea id="activityNotes" rows="3" placeholder="Ceritakan aktivitas sustainability Anda..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">
+                        📊 Catat & Hitung Impact
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let modal of modals) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        }
+
+        // Form Handlers
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            // Simulate login success
+            alert(`🎉 Selamat datang kembali! Login berhasil untuk ${email}`);
+            closeModal('loginModal');
+            
+            // Show logged-in state
+            showLoggedInState();
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const location = document.getElementById('signupLocation').value;
+            const goal = document.getElementById('signupGoal').value;
+            
+            // Simulate signup success
+            alert(`🌱 Selamat bergabung ${name}! Akun berhasil dibuat. Mari mulai dampak positif di ${location}!`);
+            closeModal('signupModal');
+            
+            // Show logged-in state
+            showLoggedInState();
+        }
+
+        function handleLogActivity(event) {
+            event.preventDefault();
+            const activityType = document.getElementById('activityType').value;
+            const wasteAmount = document.getElementById('wasteAmount').value;
+            const wasteType = document.getElementById('wasteType').value;
+            
+            // Calculate CO2 impact (simplified calculation)
+            const co2Saved = (wasteAmount * 0.3).toFixed(1); // Rough calculation
+            
+            alert(`🏆 Aktivitas berhasil dicatat!\n\n📊 Impact Summary:\n• ${wasteAmount}kg ${wasteType} diproses\n• ${co2Saved}kg CO₂ dihemat\n• +10 Eco-Kudos earned!\n\nTerima kasih atas kontribusi Anda! 🌱`);
+            closeModal('logActivityModal');
+            
+            // Update activity feed (simulate)
+            updateActivityFeed(activityType, wasteAmount, wasteType, co2Saved);
+        }
+
+        function showLoggedInState() {
+            // Update auth buttons to show logged-in state
+            const authButtons = document.querySelector('.auth-buttons');
+            authButtons.innerHTML = `
+                <a href="#" class="btn btn-primary" onclick="openModal('logActivityModal')">📊 Catat Aktivitas</a>
+                <a href="#" class="btn btn-secondary">👤 Profile</a>
+            `;
+        }
+
+        function updateActivityFeed(activityType, wasteAmount, wasteType, co2Saved) {
+            const feedMain = document.querySelector('.feed-main');
+            const newActivity = document.createElement('div');
+            newActivity.className = 'activity-item';
+            newActivity.style.borderTop = '2px solid #4caf50';
+            newActivity.innerHTML = `
+                <div class="activity-avatar">YOU</div>
+                <div class="activity-content">
+                    <div class="activity-header">Anda baru saja mencatat aktivitas ${activityType}! 🎉</div>
+                    <div class="activity-stats">
+                        <span>📍 Lokasi Anda</span>
+                        <span>💚 ${co2Saved}kg CO₂ dihemat</span>
+                        <span>⏰ Baru saja</span>
+                    </div>
+                    <div class="activity-actions">
+                        <button class="kudos-btn">💚 +10 Eco-Kudos</button>
+                        <button class="kudos-btn">💬 Bagikan</button>
+                    </div>
+                </div>
+            `;
+            feedMain.insertBefore(newActivity, feedMain.firstChild);
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Animate numbers on scroll
+        function animateNumbers() {
+            const stats = document.querySelectorAll('.stat-number, .impact-value');
+            stats.forEach(stat => {
+                const finalValue = stat.textContent;
+                let currentValue = 0;
+                const increment = finalValue.replace(/[^\d]/g, '') / 100;
+                
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue.replace(/[^\d]/g, '')) {
+                        stat.textContent = finalValue;
+                        clearInterval(timer);
+                    } else {
+                        stat.textContent = Math.floor(currentValue).toLocaleString();
+                    }
+                }, 20);
+            });
+        }
+
+        // Trigger animations when elements come into view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        });
+
+        // Add some interactive features
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to feature cards
+            const featureCards = document.querySelectorAll('.feature-card, .umkm-card, .challenge-card');
+            featureCards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-10px)';
+                    this.style.boxShadow = '0 10px 30px rgba(0,0,0,0.15)';
+                });
+                
+                card.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '0 5px 20px rgba(0,0,0,0.1)';
+                });
+            });
+
+            // Add click handlers for kudos buttons
+            const kudosButtons = document.querySelectorAll('.kudos-btn');
+            kudosButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.textContent.includes('Eco-Kudos')) {
+                        const currentKudos = parseInt(this.textContent.match(/\d+/)[0]);
+                        this.textContent = this.textContent.replace(/\d+/, currentKudos + 1);
+                        this.style.color = '#4caf50';
+                        
+                        // Add a small animation
+                        this.style.transform = 'scale(1.1)';
+                        setTimeout(() => {
+                            this.style.transform = 'scale(1)';
+                        }, 200);
+                    }
+                });
+            });
+
+            // Simulate real-time updates
+            setInterval(() => {
+                // Update some stats randomly to show "live" data
+                const statNumbers = document.querySelectorAll('.stat-number');
+                if (statNumbers.length > 0) {
+                    const randomStat = statNumbers[Math.floor(Math.random() * statNumbers.length)];
+                    if (randomStat.textContent.includes(',')) {
+                        const currentValue = parseInt(randomStat.textContent.replace(/,/g, ''));
+                        randomStat.textContent = (currentValue + 1).toLocaleString();
+                    }
+                }
+            }, 30000); // Update every 30 seconds
+        });
+
+        // Add floating action button for quick activity logging (when logged in)
+        function addFloatingActionButton() {
+            const fab = document.createElement('div');
+            fab.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                width: 60px;
+                height: 60px;
+                background: linear-gradient(135deg, #4caf50, #2e7d4f);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+                transition: all 0.3s;
+                z-index: 1000;
+            `;
+            fab.innerHTML = '📊';
+            fab.title = 'Catat Aktivitas Cepat';
+            
+            fab.addEventListener('click', () => openModal('logActivityModal'));
+            fab.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.1)';
+                this.style.boxShadow = '0 8px 25px rgba(0,0,0,0.3)';
+            });
+            fab.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+                this.style.boxShadow = '0 5px 20px rgba(0,0,0,0.2)';
+            });
+            
+            document.body.appendChild(fab);
+        }
+    </script>
+</body>
+</html>

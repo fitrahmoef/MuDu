@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Leaderboards - MuDu Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #2e7d4f, #4caf50);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: #ff6b35;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: #2e7d4f;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #2e7d4f, #4caf50);
+            color: white;
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .leaderboard-filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .filter-btn.active {
+            background: #4caf50;
+            color: white;
+            border-color: #4caf50;
+        }
+        
+        .filter-btn:hover {
+            border-color: #4caf50;
+        }
+        
+        .leaderboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .main-leaderboard {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .leaderboard-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .podium {
+            display: flex;
+            justify-content: center;
+            align-items: end;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            height: 200px;
+        }
+        
+        .podium-place {
+            text-align: center;
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 1rem;
+            min-width: 120px;
+            position: relative;
+        }
+        
+        .podium-1 {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            height: 160px;
+            order: 2;
+        }
+        
+        .podium-2 {
+            background: linear-gradient(135deg, #c0c0c0, #e8e8e8);
+            height: 120px;
+            order: 1;
+        }
+        
+        .podium-3 {
+            background: linear-gradient(135deg, #cd7f32, #daa520);
+            height: 100px;
+            order: 3;
+        }
+        
+        .podium-rank {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .podium-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            margin: 0 auto 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .podium-name {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .podium-score {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .leaderboard-table {
+            margin-top: 2rem;
+        }
+        
+        .table-header {
+            display: grid;
+            grid-template-columns: 60px 1fr 120px 120px;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-weight: bold;
+            color: #2e7d4f;
+        }
+        
+        .table-row {
+            display: grid;
+            grid-template-columns: 60px 1fr 120px 120px;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+            align-items: center;
+            transition: background 0.3s;
+        }
+        
+        .table-row:hover {
+            background: #f8f9fa;
+        }
+        
+        .rank-number {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #ff6b35;
+        }
+        
+        .participant-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .participant-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4caf50, #2e7d4f);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .participant-details h4 {
+            margin: 0;
+            font-size: 1rem;
+        }
+        
+        .participant-details .location {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .score-value {
+            font-weight: bold;
+            color: #4caf50;
+        }
+        
+        .trend-indicator {
+            font-size: 0.9rem;
+        }
+        
+        .trend-up {
+            color: #4caf50;
+        }
+        
+        .trend-down {
+            color: #f44336;
+        }
+        
+        .trend-stable {
+            color: #666;
+        }
+        
+        .widget {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .widget h3 {
+            color: #2e7d4f;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .your-position {
+            background: linear-gradient(135deg, #ff6b35, #e55a2b);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .position-rank {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .achievement-badge {
+            background: linear-gradient(135deg, #4caf50, #2e7d4f);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .badge-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .competitions-section {
+            padding: 80px 0;
+            background: #f8f9fa;
+        }
+        
+        .competition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .competition-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .competition-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .competition-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            margin: 1rem 0;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #4caf50, #2e7d4f);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .leaderboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .leaderboard-sidebar {
+                order: -1;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .podium {
+                flex-direction: column;
+                height: auto;
+                gap: 0.5rem;
+            }
+            
+            .podium-place {
+                width: 100%;
+                height: auto !important;
+                order: initial !important;
+            }
+            
+            .table-header,
+            .table-row {
+                grid-template-columns: 50px 1fr 80px;
+                gap: 0.5rem;
+            }
+            
+            .table-header :nth-child(4),
+            .table-row :nth-child(4) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <a href="/" class="logo">🌱 MuDu</a>
+            <ul class="nav-links">
+                <li><a href="/">Beranda</a></li>
+                <li><a href="/features">Fitur</a></li>
+                <li><a href="/maps">Peta Koordinasi</a></li>
+                <li><a href="/umkm">UMKM</a></li>
+                <li><a href="/challenges">Tantangan</a></li>
+            </ul>
+            <div>
+                <a href="/tracking" class="btn btn-primary">📊 Dashboard</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>🏆 Eco-Leaderboards</h1>
+            <p>Kompetisi sehat antar RT/RW untuk menjadi Compost King/Queen dengan ranking real-time</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="main-content">
+        <div class="container">
+            <!-- Your Position -->
+            <div class="your-position">
+                <div class="position-rank">#12</div>
+                <h3>Posisi Anda Saat Ini</h3>
+                <p>Naik 3 peringkat minggu ini! 🔥</p>
+                <div style="margin-top: 1rem;">
+                    <strong>156.8 kg</strong> sampah diolah • <strong>47.2 kg</strong> CO₂ dihemat
+                </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="leaderboard-filters">
+                <button class="filter-btn active" onclick="switchLeaderboard('rt')">🏘️ Ranking RT/RW</button>
+                <button class="filter-btn" onclick="switchLeaderboard('individual')">👤 Individual</button>
+                <button class="filter-btn" onclick="switchLeaderboard('weekly')">📅 Mingguan</button>
+                <button class="filter-btn" onclick="switchLeaderboard('monthly')">📊 Bulanan</button>
+                <button class="filter-btn" onclick="switchLeaderboard('co2')">💚 CO₂ Heroes</button>
+            </div>
+
+            <!-- Leaderboard Layout -->
+            <div class="leaderboard-grid">
+                <!-- Main Leaderboard -->
+                <div class="main-leaderboard">
+                    <h2 style="color: #2e7d4f; margin-bottom: 2rem; text-align: center;">🏘️ Top RT/RW Jakarta</h2>
+
+                    <!-- Podium -->
+                    <div class="podium">
+                        <div class="podium-place podium-2">
+                            <div class="podium-rank">2</div>
+                            <div class="podium-avatar">RT03</div>
+                            <div class="podium-name">RT 03 Menteng</div>
+                            <div class="podium-score">742.5 kg</div>
+                        </div>
+                        <div class="podium-place podium-1">
+                            <div class="podium-rank">1</div>
+                            <div class="podium-avatar">RT05</div>
+                            <div class="podium-name">RT 05 Kemang</div>
+                            <div class="podium-score">856.2 kg</div>
+                        </div>
+                        <div class="podium-place podium-3">
+                            <div class="podium-rank">3</div>
+                            <div class="podium-avatar">RT07</div>
+                            <div class="podium-name">RT 07 Fatmawati</div>
+                            <div class="podium-score">698.1 kg</div>
+                        </div>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="leaderboard-table">
+                        <div class="table-header">
+                            <div>Rank</div>
+                            <div>RT/RW</div>
+                            <div>Sampah Diolah</div>
+                            <div>Trend</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="rank-number">4</div>
+                            <div class="participant-info">
+                                <div class="participant-avatar">RT02</div>
+                                <div class="participant-details">
+                                    <h4>RT 02 Senayan</h4>
+                                    <div class="location">Kec. Kebayoran Baru</div>
+                                </div>
+                            </div>
+                            <div class="score-value">634.7 kg</div>
+                            <div class="trend-indicator trend-up">↗️ +2</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="rank-number">5</div>
+                            <div class="participant-info">
+                                <div class="participant-avatar">RT04</div>
+                                <div class="participant-details">
+                                    <h4>RT 04 Kuningan</h4>
+                                    <div class="location">Kec. Setiabudi</div>
+                                </div>
+                            </div>
+                            <div class="score-value">589.3 kg</div>
+                            <div class="trend-indicator trend-stable">— 0</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="rank-number">6</div>
+                            <div class="participant-info">
+                                <div class="participant-avatar">RT08</div>
+                                <div class="participant-details">
+                                    <h4>RT 08 Pancoran</h4>
+                                    <div class="location">Kec. Pancoran</div>
+                                </div>
+                            </div>
+                            <div class="score-value">523.9 kg</div>
+                            <div class="trend-indicator trend-down">↘️ -1</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="rank-number">7</div>
+                            <div class="participant-info">
+                                <div class="participant-avatar">RT01</div>
+                                <div class="participant-details">
+                                    <h4>RT 01 Cikini</h4>
+                                    <div class="location">Kec. Menteng</div>
+                                </div>
+                            </div>
+                            <div class="score-value">489.2 kg</div>
+                            <div class="trend-indicator trend-up">↗️ +3</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="rank-number">8</div>
+                            <div class="participant-info">
+                                <div class="participant-avatar">RT09</div>
+                                <div class="participant-details">
+                                    <h4>RT 09 Tebet</h4>
+                                    <div class="location">Kec. Tebet</div>
+                                </div>
+                            </div>
+                            <div class="score-value">467.5 kg</div>
+                            <div class="trend-indicator trend-up">↗️ +1</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="rank-number">9</div>
+                            <div class="participant-info">
+                                <div class="participant-avatar">RT06</div>
+                                <div class="participant-details">
+                                    <h4>RT 06 Kalibata</h4>
+                                    <div class="location">Kec. Pancoran</div>
+                                </div>
+                            </div>
+                            <div class="score-value">445.8 kg</div>
+                            <div class="trend-indicator trend-stable">— 0</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="rank-number">10</div>
+                            <div class="participant-info">
+                                <div class="participant-avatar">RT12</div>
+                                <div class="participant-details">
+                                    <h4>RT 12 Cipete</h4>
+                                    <div class="location">Kec. Kebayoran Baru</div>
+                                </div>
+                            </div>
+                            <div class="score-value">423.1 kg</div>
+                            <div class="trend-indicator trend-down">↘️ -2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="leaderboard-sidebar">
+                    <!-- Quick Stats -->
+                    <div class="widget">
+                        <h3>⚡ Statistik Cepat</h3>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <span>Total Peserta</span>
+                            <strong style="color: #4caf50;">156 RT</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <span>Kompetisi Aktif</span>
+                            <strong style="color: #ff6b35;">8</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Total Reward</span>
+                            <strong style="color: #2196f3;">Rp 50 Juta</strong>
+                        </div>
+                    </div>
+
+                    <!-- Achievements -->
+                    <div class="widget">
+                        <h3>🏆 Achievements Anda</h3>
+                        <div class="achievements-grid">
+                            <div class="achievement-badge">
+                                <div class="badge-icon">🥉</div>
+                                <div>Bronze Rank</div>
+                            </div>
+                            <div class="achievement-badge">
+                                <div class="badge-icon">📈</div>
+                                <div>Trend Naik</div>
+                            </div>
+                            <div class="achievement-badge">
+                                <div class="badge-icon">💚</div>
+                                <div>CO₂ Saver</div>
+                            </div>
+                            <div class="achievement-badge">
+                                <div class="badge-icon">🔥</div>
+                                <div>30-Day Streak</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Competition Progress -->
+                    <div class="widget">
+                        <h3>📊 Progress Kompetisi</h3>
+                        <div style="margin-bottom: 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Target Bulanan</span>
+                                <span>73%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 73%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>Posisi Target</span>
+                                <span>Top 10</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nearest Competitors -->
+                    <div class="widget">
+                        <h3>🎯 Kompetitor Terdekat</h3>
+                        <div style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>RT 11 Kemang</strong>
+                                    <div style="font-size: 0.9rem; color: #666;">Rank #11</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: #4caf50; font-weight: bold;">189.3 kg</div>
+                                    <div style="font-size: 0.8rem; color: #666;">-33.5 kg</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>RT 13 Blok M</strong>
+                                    <div style="font-size: 0.9rem; color: #666;">Rank #13</div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: #4caf50; font-weight: bold;">142.7 kg</div>
+                                    <div style="font-size: 0.8rem; color: #4caf50;">+14.1 kg</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Active Competitions -->
+    <section class="competitions-section">
+        <div class="container">
+            <h2 style="text-align: center; color: #2e7d4f; margin-bottom: 3rem;">🏁 Kompetisi Aktif</h2>
+            
+            <div class="competition-grid">
+                <div class="competition-card">
+                    <div class="competition-icon">🌟</div>
+                    <h3>Compost King/Queen</h3>
+                    <p>Kompetisi bulanan untuk RT dengan produksi kompos terbaik</p>
+                    <div style="display: flex; justify-content: space-between; margin: 1rem 0;">
+                        <span>Prize Pool</span>
+                        <strong>Rp 15 Juta</strong>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 67%;"></div>
+                    </div>
+                    <div style="margin-top: 0.5rem; color: #666;">13 hari tersisa</div>
+                    <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Join Competition</button>
+                </div>
+                
+                <div class="competition-card">
+                    <div class

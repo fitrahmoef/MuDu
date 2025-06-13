@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Impact Tracking - MuDu Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #2e7d4f, #4caf50);
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+        
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+        
+        .btn {
+            padding: 0.5rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .btn-primary {
+            background: #ff6b35;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #e55a2b;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        .btn-secondary:hover {
+            background: white;
+            color: #2e7d4f;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #2e7d4f, #4caf50);
+            color: white;
+            padding: 120px 0 80px;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 80px 0;
+            background: white;
+        }
+        
+        .tracking-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .dashboard-main {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .dashboard-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .widget {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .widget h3 {
+            color: #2e7d4f;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #4caf50, #2e7d4f);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .stat-label {
+            margin-top: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        .activity-log {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .log-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .log-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .log-details {
+            flex: 1;
+        }
+        
+        .log-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .impact-value {
+            color: #4caf50;
+            font-weight: bold;
+        }
+        
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(45deg, #e8f5e8 25%, #f0f8f0 25%, #f0f8f0 50%, #e8f5e8 50%, #e8f5e8 75%, #f0f8f0 75%);
+            background-size: 20px 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 1.2rem;
+            position: relative;
+        }
+        
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            margin-top: 0.5rem;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #4caf50, #2e7d4f);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .goals-section {
+            background: #f8f9fa;
+            padding: 3rem 0;
+        }
+        
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .goal-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .goal-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .achievements {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        
+        .achievement-badge {
+            background: #ff6b35;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+        
+        .floating-add-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4caf50, #2e7d4f);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+            z-index: 1000;
+            border: none;
+        }
+        
+        .floating-add-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4caf50;
+        }
+        
+        @media (max-width: 768px) {
+            .tracking-dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-sidebar {
+                order: -1;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="container">
+            <a href="/" class="logo">🌱 MuDu</a>
+            <ul class="nav-links">
+                <li><a href="/">Beranda</a></li>
+                <li><a href="/features">Fitur</a></li>
+                <li><a href="/maps">Peta Koordinasi</a></li>
+                <li><a href="/umkm">UMKM</a></li>
+                <li><a href="/challenges">Tantangan</a></li>
+            </ul>
+            <div>
+                <a href="#" class="btn btn-primary" onclick="openModal('addActivityModal')">📊 Catat Aktivitas</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>📊 Smart Impact Tracking</h1>
+            <p>Pantau dampak lingkungan Anda secara real-time dengan analisis mendalam dan visualisasi interaktif</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="main-content">
+        <div class="container">
+            <!-- Dashboard -->
+            <div class="tracking-dashboard">
+                <div class="dashboard-main">
+                    <h2 style="color: #2e7d4f; margin-bottom: 2rem;">Dashboard Impact Anda</h2>
+                    
+                    <!-- Stats Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-value">247.5</span>
+                            <div class="stat-label">Kg Sampah Diolah</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value">74.2</span>
+                            <div class="stat-label">Kg CO₂ Dihemat</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value">156</span>
+                            <div class="stat-label">Hari Streak</div>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value">89</span>
+                            <div class="stat-label">Eco-Kudos Earned</div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div class="chart-container">
+                        <h3 style="color: #2e7d4f; margin-bottom: 1rem;">📈 Trend Aktivitas Bulanan</h3>
+                        <div class="chart-placeholder">
+                            <div style="text-align: center;">
+                                <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                                <div>Grafik trend aktivitas composting Anda</div>
+                                <div style="font-size: 0.9rem; color: #999; margin-top: 0.5rem;">Data diperbarui real-time</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity Log -->
+                    <div class="activity-log">
+                        <h3 style="color: #2e7d4f; margin-bottom: 1rem;">📋 Log Aktivitas Terbaru</h3>
+                        
+                        <div class="log-item">
+                            <div class="log-details">
+                                <strong>Composting Organik</strong>
+                                <div class="log-date">Hari ini, 14:30</div>
+                            </div>
+                            <div>
+                                <div>2.5 kg</div>
+                                <div class="impact-value">+0.75 kg CO₂</div>
+                            </div>
+                        </div>
+                        
+                        <div class="log-item">
+                            <div class="log-details">
+                                <strong>Pemilahan Sampah</strong>
+                                <div class="log-date">Kemarin, 09:15</div>
+                            </div>
+                            <div>
+                                <div>4.2 kg</div>
+                                <div class="impact-value">+1.26 kg CO₂</div>
+                            </div>
+                        </div>
+                        
+                        <div class="log-item">
+                            <div class="log-details">
+                                <strong>Edukasi Komunitas</strong>
+                                <div class="log-date">2 hari lalu, 16:00</div>
+                            </div>
+                            <div>
+                                <div>15 peserta</div>
+                                <div class="impact-value">+5 Eco-Kudos</div>
+                            </div>
+                        </div>
+                        
+                        <div class="log-item">
+                            <div class="log-details">
+                                <strong>Bersih-bersih RT</strong>
+                                <div class="log-date">3 hari lalu, 07:00</div>
+                            </div>
+                            <div>
+                                <div>12.8 kg</div>
+                                <div class="impact-value">+3.84 kg CO₂</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="dashboard-sidebar">
+                    <!-- Quick Stats -->
+                    <div class="widget">
+                        <h3>⚡ Statistik Cepat</h3>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <span>Aktivitas Minggu Ini</span>
+                            <strong style="color: #4caf50;">12</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <span>Ranking RT</span>
+                            <strong style="color: #ff6b35;">#3</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Streak Terpanjang</span>
+                            <strong style="color: #2196f3;">189 hari</strong>
+                        </div>
+                    </div>
+
+                    <!-- Target Progress -->
+                    <div class="widget">
+                        <h3>🎯 Target Bulanan</h3>
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Compost Target</span>
+                                <span>75/100 kg</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>CO₂ Reduction</span>
+                                <span>22.5/30 kg</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div style="display: flex; justify-content: space-between;">
+                                <span>Eco-Kudos</span>
+                                <span>89/150</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 59%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements -->
+                    <div class="widget">
+                        <h3>🏆 Pencapaian Terbaru</h3>
+                        <div class="achievements">
+                            <div class="achievement-badge">Compost Master</div>
+                            <div class="achievement-badge">Week Warrior</div>
+                            <div class="achievement-badge">CO₂ Saver</div>
+                            <div class="achievement-badge">Streak King</div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="widget">
+                        <h3>⚡ Aksi Cepat</h3>
+                        <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.5rem;" onclick="openModal('addActivityModal')">
+                            📊 Catat Aktivitas
+                        </button>
+                        <button class="btn btn-secondary" style="width: 100%; margin-bottom: 0.5rem;">
+                            📄 Export Data
+                        </button>
+                        <button class="btn btn-secondary" style="width: 100%;">
+                            📤 Bagikan Progress
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Goals Section -->
+    <section class="goals-section">
+        <div class="container">
+            <h2 style="text-align: center; color: #2e7d4f; margin-bottom: 3rem;">🎯 Target & Analisis Impact</h2>
+            
+            <div class="goals-grid">
+                <div class="goal-card">
+                    <div class="goal-icon">🌱</div>
+                    <h3>Waste Reduction Target</h3>
+                    <p>Kurangi 60% sampah rumah tangga dalam 6 bulan</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 73%;"></div>
+                    </div>
+                    <div style="margin-top: 0.5rem; color: #666;">73% tercapai</div>
+                </div>
+                
+                <div class="goal-card">
+                    <div class="goal-icon">💚</div>
+                    <h3>Carbon Footprint</h3>
+                    <p>Hemat 100kg CO₂ melalui composting tahun ini</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 42%;"></div>
+                    </div>
+                    <div style="margin-top: 0.5rem; color: #666;">42.5kg dari 100kg</div>
+                </div>
+                
+                <div class="goal-card">
+                    <div class="goal-icon">👥</div>
+                    <h3>Community Impact</h3>
+                    <p>Edukasi 50 tetangga tentang sustainability</p>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 56%;"></div>
+                    </div>
+                    <div style="margin-top: 0.5rem; color: #666;">28 dari 50 orang</div>
+                </div>
+            </div>
+
+            <!-- Impact Comparison -->
+            <div style="margin-top: 3rem; text-align: center; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+                <h3 style="color: #2e7d4f; margin-bottom: 2rem;">📊 Perbandingan Impact Anda</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
+                    <div>
+                        <div style="font-size: 2rem; color: #4caf50;">74.2 kg</div>
+                        <div>CO₂ Anda Hemat</div>
+                        <div style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">= 322 km berkendara</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; color: #ff6b35;">247.5 kg</div>
+                        <div>Sampah Diolah</div>
+                        <div style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">= 3.2 bak sampah</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 2rem; color: #2196f3;">156 hari</div>
+                        <div>Consistency Streak</div>
+                        <div style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">Top 5% community</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating Action Button -->
+    <button class="floating-add-btn" onclick="openModal('addActivityModal')" title="Catat Aktivitas Baru">
+        ➕
+    </button>
+
+    <!-- Add Activity Modal -->
+    <div id="addActivityModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addActivityModal')">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; color: #2e7d4f;">📊 Catat Aktivitas Sustainability</h2>
+            
+            <form onsubmit="handleAddActivity(event)">
+                <div class="form-group">
+                    <label for="activityType">Jenis Aktivitas</label>
+                    <select id="activityType" required>
+                        <option value="">Pilih jenis aktivitas</option>
+                        <option value="composting">🌱 Composting</option>
+                        <option value="waste_sorting">♻️ Pemilahan Sampah</option>
+                        <option value="community_education">🎓 Edukasi Komunitas</option>
+                        <option value="cleanup">🧹 Bersih-bersih</option>
+                        <option value="tree_planting">🌳 Penanaman Pohon</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wasteAmount">Jumlah/Volume</label>
+                    <input type="number" id="wasteAmount" step="0.1" min="0" placeholder="Contoh: 2.5 kg atau 15 orang" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="wasteType">Kategori Detail</label>
+                    <select id="wasteType" required>
+                        <option value="">Pilih kategori</option>
+                        <option value="organic">Organik (sisa makanan, daun)</option>
+                        <option value="paper">Kertas & Kardus</option>
+                        <option value="plastic">Plastik</option>
+                        <option value="glass">Kaca</option>
+                        <option value="metal">Logam</option>
+                        <option value="mixed">Campuran</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="activityLocation">Lokasi</label>
+                    <input type="text" id="activityLocation" placeholder="Contoh: Rumah, RT 05, RPTRA" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="activityNotes">Catatan (Opsional)</label>
+                    <textarea id="activityNotes" rows="3" placeholder="Ceritakan aktivitas Anda..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="activityPhoto">Foto Dokumentasi</label>
+                    <input type="file" id="activityPhoto" accept="image/*">
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem;">
+                        📊 Catat & Hitung Impact
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let modal of modals) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        }
+
+        // Handle Add Activity
+        function handleAddActivity(event) {
+            event.preventDefault();
+            const activityType = document.getElementById('activityType').value;
+            const wasteAmount = document.getElementById('wasteAmount').value;
+            const wasteType = document.getElementById('wasteType').value;
+            const location = document.getElementById('activityLocation').value;
+            
+            // Calculate CO2 impact (simplified calculation)
+            const co2Saved = (wasteAmount * 0.3).toFixed(1);
+            const ecoKudos = Math.floor(wasteAmount * 2);
+            
+            alert(`🏆 Aktivitas berhasil dicatat!\n\n📊 Impact Summary:\n• ${wasteAmount}kg ${wasteType} diproses\n• ${co2Saved}kg CO₂ dihemat\n• +${ecoKudos} Eco-Kudos earned!\n• Lokasi: ${location}\n\nStreak Anda: 157 hari! 🔥`);
+            closeModal('addActivityModal');
+            
+            // Update dashboard (simulate)
+            updateDashboard(activityType, wasteAmount, wasteType, co2Saved, ecoKudos);
+        }
+
+        function updateDashboard(activityType, wasteAmount, wasteType, co2Saved, ecoKudos) {
+            // Update main stats
+            const statCards = document.querySelectorAll('.stat-value');
+            if (statCards.length >= 4) {
+                // Update waste processed
+                const currentWaste = parseFloat(statCards[0].textContent);
+                statCards[0].textContent = (currentWaste + parseFloat(wasteAmount)).toFixed(1);
+                
+                // Update CO2 saved
+                const currentCO2 = parseFloat(statCards[1].textContent);
+                statCards[1].textContent = (currentCO2 + parseFloat(co2Saved)).toFixed(1);
+                
+                // Update streak
+                const currentStreak = parseInt(statCards[2].textContent);
+                statCards[2].textContent = currentStreak + 1;
+                
+                // Update eco-kudos
+                const currentKudos = parseInt(statCards[3].textContent);
+                statCards[3].textContent = currentKudos + ecoKudos;
+            }
+            
+            // Add to activity log
+            const activityLog = document.querySelector('.activity-log');
+            const newLogItem = document.createElement('div');
+            newLogItem.className = 'log-item';
+            newLogItem.style.borderLeft = '4px solid #4caf50';
+            newLogItem.innerHTML = `
+                <div class="log-details">
+                    <strong>${activityType}</strong>
+                    <div class="log-date">Baru saja</div>
+                </div>
+                <div>
+                    <div>${wasteAmount} kg</div>
+                    <div class="impact-value">+${co2Saved} kg CO₂</div>
+                </div>
+            `;
+            activityLog.insertBefore(newLogItem, activityLog.children[1]);
+        }
+
+        // Animate statistics on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const statValues = document.querySelectorAll('.stat-value');
+            statValues.forEach(stat => {
+                const finalValue = parseFloat(stat.textContent);
+                let currentValue = 0;
+                const increment = finalValue / 50;
+                
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        stat.textContent = finalValue % 1 === 0 ? finalValue : finalValue.toFixed(1);
+                        clearInterval(timer);
+                    } else {
+                        stat.textContent = currentValue % 1 === 0 ? Math.floor(currentValue) : currentValue.toFixed(1);
+                    }
+                }, 30);
+            });
+
+            // Animate progress bars
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach(bar => {
+                const targetWidth = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = targetWidth;
+                }, 500);
+            });
+        });
+
+        // Real-time updates simulation
+        setInterval(() => {
+            // Randomly update some live stats
+            const quickStats = document.querySelectorAll('.widget strong');
+            if (quickStats.length >= 3) {
+                // Update activities this week
+                const currentActivities = parseInt(quickStats[0].textContent);
+                if (Math.random() < 0.1) { // 10% chance
+                    quickStats[0].textContent = currentActivities + 1;
+                }
+            }
+        }, 30000); // Every 30 seconds
+    </script>
+</body>
+</html>
