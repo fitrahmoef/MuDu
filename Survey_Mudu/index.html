@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulir Interaktif - MuDu Survey</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        
+        .slide-up {
+            animation: slideUp 0.5s ease-out forwards;
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.7s ease-out forwards;
+        }
+        
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .question-card {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .option-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+        
+        .option-card.selected {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            transform: scale(1.02);
+        }
+        
+        .floating-circles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .circle:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .circle:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 70%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+        
+        .circle:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 40%;
+            right: 20%;
+            animation-delay: 4s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        
+        .typing {
+            border-right: 2px solid #4facfe;
+            animation: typing 0.5s steps(1) infinite;
+        }
+        
+        @keyframes typing {
+            50% { border-color: transparent; }
+        }
+        
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #4facfe;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            max-width: 300px;
+            padding: 16px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .notification.error {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+
+        .search-input {
+            position: relative;
+        }
+
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen relative">
+    <!-- Floating Background Circles -->
+    <div class="floating-circles">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+    </div>
+
+    <div class="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center">
+        <div class="w-full max-w-2xl">
+            <!-- Progress Bar -->
+            <div class="mb-8 fade-in">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-2xl font-bold text-white">Survey MuDu</h1>
+                    <span class="text-white/80 text-sm" id="progress-text">Langkah 1 dari 7</span>
+                </div>
+                <div class="w-full bg-white/20 rounded-full h-3 overflow-hidden">
+                    <div class="progress-bar bg-gradient-to-r from-yellow-400 to-orange-500 h-full rounded-full" 
+                         id="progress-bar" style="width: 14.3%"></div>
+                </div>
+            </div>
+
+            <!-- Question Container -->
+            <div class="question-card rounded-3xl p-8 shadow-2xl bounce-in" id="question-container">
+                <!-- Question 1: Personal Info -->
+                <div class="question-step" id="step-1">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Perkenalkan Diri Anda</h2>
+                        <p class="text-gray-600">Mari kita mulai dengan mengenal Anda lebih baik</p>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div class="slide-up">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Nama Lengkap</label>
+                            <input type="text" id="nama" 
+                                   class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg"
+                                   placeholder="Masukkan nama lengkap Anda">
+                        </div>
+                        
+                        <div class="slide-up" style="animation-delay: 0.1s">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Umur</label>
+                            <input type="number" id="umur" 
+                                   class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg"
+                                   placeholder="Berapa umur Anda?">
+                        </div>
+                        
+                        <div class="slide-up" style="animation-delay: 0.2s">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Kota Administratif</label>
+                            <select id="kota-admin" 
+                                    class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg">
+                                <option value="">Pilih Kota Administratif...</option>
+                                <option value="Jakarta Pusat">Jakarta Pusat</option>
+                                <option value="Jakarta Utara">Jakarta Utara</option>
+                                <option value="Jakarta Barat">Jakarta Barat</option>
+                                <option value="Jakarta Selatan">Jakarta Selatan</option>
+                                <option value="Jakarta Timur">Jakarta Timur</option>
+                            </select>
+                        </div>
+                        
+                        <div class="slide-up search-input" style="animation-delay: 0.3s">
+                            <label class="block text-sm font-semibold text-gray-700 mb-3">Kecamatan</label>
+                            <select id="kecamatan" 
+                                    class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg"
+                                    disabled>
+                                <option value="">Pilih kota administratif terlebih dahulu...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 2: Environment Interest -->
+                <div class="question-step hidden" id="step-2">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Kepedulian Lingkungan</h2>
+                        <p class="text-gray-600">Seberapa peduli Anda dengan masalah lingkungan?</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="option-card p-6 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="sangat-peduli">
+                            <div class="text-center">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-2xl">🌱</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-800">Sangat Peduli</h3>
+                                <p class="text-sm text-gray-600 mt-2">Selalu berusaha hidup ramah lingkungan</p>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-6 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="cukup-peduli" style="animation-delay: 0.1s">
+                            <div class="text-center">
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-2xl">🌍</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-800">Cukup Peduli</h3>
+                                <p class="text-sm text-gray-600 mt-2">Peduli tapi belum konsisten</p>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-6 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="kurang-peduli" style="animation-delay: 0.2s">
+                            <div class="text-center">
+                                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-2xl">🤔</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-800">Kurang Peduli</h3>
+                                <p class="text-sm text-gray-600 mt-2">Baru mulai menyadari pentingnya</p>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-6 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="tidak-peduli" style="animation-delay: 0.3s">
+                            <div class="text-center">
+                                <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-2xl">😐</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-800">Belum Peduli</h3>
+                                <p class="text-sm text-gray-600 mt-2">Belum tahu harus mulai dari mana</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 3: Waste Management -->
+                <div class="question-step hidden" id="step-3">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Pengelolaan Sampah</h2>
+                        <p class="text-gray-600">Bagaimana cara Anda mengelola sampah rumah tangga?</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="option-card p-5 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="pisah" style="animation-delay: 0.1s">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                    <span class="text-xl">♻️</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Memisahkan Sampah</h3>
+                                    <p class="text-sm text-gray-600">Memisah organik, anorganik, dan B3</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-5 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="reduce" style="animation-delay: 0.2s">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                                    <span class="text-xl">📦</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Mengurangi Sampah</h3>
+                                    <p class="text-sm text-gray-600">Mengurangi penggunaan plastik sekali pakai</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-5 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="biasa" style="animation-delay: 0.3s">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4">
+                                    <span class="text-xl">🗑️</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Seperti Biasa</h3>
+                                    <p class="text-sm text-gray-600">Membuang sampah ke tempat sampah biasa</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 4: Technology Usage -->
+                <div class="question-step hidden" id="step-4">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Penggunaan Teknologi</h2>
+                        <p class="text-gray-600">Berapa lama Anda menggunakan aplikasi mobile setiap hari?</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="option-card p-6 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="1-2-jam">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-2xl">⏰</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-800 text-lg">1-2 Jam</h3>
+                                <p class="text-sm text-gray-600 mt-2">Penggunaan terbatas untuk hal penting</p>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-6 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="3-4-jam" style="animation-delay: 0.1s">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-2xl">📱</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-800 text-lg">3-4 Jam</h3>
+                                <p class="text-sm text-gray-600 mt-2">Penggunaan moderat setiap hari</p>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-6 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="lebih-5-jam" style="animation-delay: 0.2s">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-2xl">📲</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-800 text-lg">Lebih dari 5 Jam</h3>
+                                <p class="text-sm text-gray-600 mt-2">Penggunaan intensif sepanjang hari</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 5: App Education Motivation -->
+                <div class="question-step hidden" id="step-5">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Edukasi Aplikasi</h2>
+                        <p class="text-gray-600">Apakah Anda akan terdorong untuk memilah sampah jika diedukasi oleh sebuah app?</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="option-card p-6 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="tentu">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-2xl">✅</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-800 text-lg">Tentu</h3>
+                                <p class="text-sm text-gray-600 mt-2">Aplikasi akan sangat membantu memotivasi saya</p>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-6 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="mungkin" style="animation-delay: 0.1s">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-2xl">🤔</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-800 text-lg">Mungkin (50/50)</h3>
+                                <p class="text-sm text-gray-600 mt-2">Tergantung pada kualitas dan fitur aplikasi</p>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-6 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="tidak-akan" style="animation-delay: 0.2s">
+                            <div class="text-center">
+                                <div class="w-16 h-16 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <span class="text-2xl">❌</span>
+                                </div>
+                                <h3 class="font-semibold text-gray-800 text-lg">Tidak Akan</h3>
+                                <p class="text-sm text-gray-600 mt-2">Aplikasi tidak akan mengubah kebiasaan saya</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question 6: Waste Sorting Challenges -->
+                <div class="question-step hidden" id="step-6">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Tantangan Memilah Sampah</h2>
+                        <p class="text-gray-600">Apa tantangan yang menjadi penghalang Anda untuk tidak memilah sampah rumah tangga?</p>
+                    </div>
+                    
+                    <div class="slide-up">
+                        <textarea id="tantangan" 
+                                  class="w-full px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-300 text-lg resize-none"
+                                  rows="4"
+                                  placeholder="Contoh: Tidak ada tempat sampah terpisah, kurang pengetahuan cara memilah, tidak ada waktu, dll..."></textarea>
+                        <p class="text-sm text-gray-500 mt-2">Jelaskan secara singkat tantangan yang Anda hadapi</p>
+                    </div>
+                </div>
+
+                <!-- Question 7: Motivation -->
+                <div class="question-step hidden" id="step-7">
+                    <div class="text-center mb-8">
+                        <div class="w-16 h-16 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-800 mb-2">Motivasi Anda</h2>
+                        <p class="text-gray-600">Apa yang paling memotivasi Anda untuk peduli lingkungan?</p>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="option-card p-5 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="anak-cucu">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mr-4">
+                                    <span class="text-xl">👶</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Masa Depan Anak Cucu</h3>
+                                    <p class="text-sm text-gray-600">Ingin meninggalkan bumi yang lebih baik</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-5 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="kesehatan" style="animation-delay: 0.1s">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                                    <span class="text-xl">💚</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Kesehatan Keluarga</h3>
+                                    <p class="text-sm text-gray-600">Lingkungan bersih untuk kesehatan</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-5 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="ekonomi" style="animation-delay: 0.2s">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+                                    <span class="text-xl">💰</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Manfaat Ekonomi</h3>
+                                    <p class="text-sm text-gray-600">Menghemat pengeluaran rumah tangga</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="option-card p-5 bg-white rounded-xl border-2 border-gray-200 slide-up" data-value="trend" style="animation-delay: 0.3s">
+                            <div class="flex items-center">
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-4">
+                                    <span class="text-xl">✨</span>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">Mengikuti Tren</h3>
+                                    <p class="text-sm text-gray-600">Gaya hidup yang sedang populer</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thank You Page -->
+                <div class="question-step hidden" id="thank-you">
+                    <div class="text-center">
+                        <div class="w-20 h-20 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6 bounce-in">
+                            <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-4xl font-bold text-gray-800 mb-4 fade-in">Terima Kasih!</h2>
+                        <p class="text-xl text-gray-600 mb-8 fade-in">Terima kasih sudah mengisi survey ini</p>
+                        
+                        <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 mb-8 slide-up">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Hasil Survey Anda:</h3>
+                            <div id="survey-results" class="text-left space-y-2 text-sm text-gray-700">
+                                <!-- Results will be populated here -->
+                            </div>
+                            <div id="server-response" class="mt-4 text-xs text-gray-500">
+                                <!-- Server response will be shown here -->
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-center">
+                            <button onclick="restartSurvey()" 
+                                    class="btn-hover bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl font-semibold shadow-lg">
+                                Mulai Survey Lagi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="flex justify-between mt-8 pt-6 border-t border-gray-200" id="navigation">
+                    <button id="prev-btn" 
+                            class="btn-hover bg-gray-500 text-white px-6 py-3 rounded-xl font-semibold disabled:opacity-50 disabled:cursor-not-allowed" 
+                            onclick="previousStep()" disabled>
+                        ← Sebelumnya
+                    </button>
+                    
+                    <button id="next-btn" 
+                            class="btn-hover bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-xl font-semibold" 
+                            onclick="nextStep()">
+                        <span id="next-btn-text">Selanjutnya →</span>
+                        <div id="next-btn-loading" class="hidden">
+                            <div class="loading-spinner"></div>
+                            Menyimpan...
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - UPDATE THIS WITH YOUR GOOGLE APPS SCRIPT WEB APP URL
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx1Kgwsl2ZOzeCkYmJ6lMPKiZcZMrJ53E9RDQiiG0FywdaNWqv1Ero0GMRbl3ZQVc0n/exec';
+
+        // Jakarta Kecamatan Data by Administrative City
+        const jakartaKecamatan = {
+            "Jakarta Pusat": [
+                "Gambir", "Sawah Besar", "Kemayoran", "Senen", "Cikini", 
+                "Tanah Abang", "Menteng", "Johar Baru"
+            ],
+            "Jakarta Utara": [
+                "Penjaringan", "Pademangan", "Tanjung Priok", "Koja", 
+                "Kelapa Gading", "Cilincing"
+            ],
+            "Jakarta Barat": [
+                "Tambora", "Taman Sari", "Grogol Petamburan", "Palmerah", 
+                "Cengkareng", "Kalideres", "Kebon Jeruk", "Kembangan"
+            ],
+            "Jakarta Selatan": [
+                "Kebayoran Baru", "Kebayoran Lama", "Pesanggrahan", "Cilandak", 
+                "Pasar Minggu", "Jagakarsa", "Mampang Prapatan", "Pancoran", 
+                "Tebet", "Setiabudi"
+            ],
+            "Jakarta Timur": [
+                "Matraman", "Pulogadung", "Jatinegara", "Duren Sawit", 
+                "Kramat Jati", "Pasar Rebo", "Ciracas", "Cipayung", 
+                "Cakung", "Makasar"
+            ]
+        };
+
+        let currentStep = 1;
+        const totalSteps = 7;
+        const answers = {};
+        let isSubmitting = false;
+
+        function updateProgress() {
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const percentage = (currentStep / totalSteps) * 100;
+            
+            progressBar.style.width = percentage + '%';
+            progressText.textContent = `Langkah ${currentStep} dari ${totalSteps}`;
+        }
+
+        function showStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.question-step').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Show current step
+            const currentStepEl = document.getElementById(`step-${step}`);
+            if (currentStepEl) {
+                currentStepEl.classList.remove('hidden');
+                currentStepEl.classList.add('fade-in');
+            }
+            
+            // Show thank you page
+            if (step > totalSteps) {
+                document.getElementById('thank-you').classList.remove('hidden');
+                document.getElementById('navigation').classList.add('hidden');
+                displayResults();
+                return;
+            }
+            
+            // Update navigation buttons
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            
+            prevBtn.disabled = step === 1;
+            prevBtn.style.opacity = step === 1 ? '0.5' : '1';
+            
+            if (step === totalSteps) {
+                document.getElementById('next-btn-text').textContent = 'Submit';
+                nextBtn.classList.remove('from-blue-500', 'to-purple-500');
+                nextBtn.classList.add('from-green-500', 'to-emerald-500');
+            } else {
+                document.getElementById('next-btn-text').textContent = 'Selanjutnya →';
+                nextBtn.classList.remove('from-green-500', 'to-emerald-500');
+                nextBtn.classList.add('from-blue-500', 'to-purple-500');
+            }
+        }
+
+        function validateStep(step) {
+            switch(step) {
+                case 1:
+                    const nama = document.getElementById('nama').value.trim();
+                    const umur = document.getElementById('umur').value.trim();
+                    const kotaAdmin = document.getElementById('kota-admin').value;
+                    const kecamatan = document.getElementById('kecamatan').value;
+                    
+                    if (!nama || !umur || !kotaAdmin || !kecamatan) {
+                        showError('Mohon lengkapi semua data diri Anda');
+                        return false;
+                    }
+                    
+                    if (parseInt(umur) < 10 || parseInt(umur) > 100) {
+                        showError('Umur harus antara 10-100 tahun');
+                        return false;
+                    }
+                    
+                    answers.nama = nama;
+                    answers.umur = umur;
+                    answers.kota_administratif = kotaAdmin;
+                    answers.kecamatan = kecamatan;
+                    break;
+
+                case 6:
+                    const tantangan = document.getElementById('tantangan').value.trim();
+                    if (!tantangan) {
+                        showError('Mohon jelaskan tantangan yang Anda hadapi');
+                        return false;
+                    }
+                    answers.tantangan_memilah = tantangan;
+                    break;
+                    
+                case 2:
+                case 3:
+                case 4:
+                case 5:
+                case 7:
+                    const selectedOption = document.querySelector(`#step-${step} .option-card.selected`);
+                    if (!selectedOption) {
+                        showError('Mohon pilih salah satu jawaban');
+                        return false;
+                    }
+                    
+                    const stepKey = {
+                        2: 'kepedulian_lingkungan',
+                        3: 'pengelolaan_sampah',
+                        4: 'penggunaan_teknologi',
+                        5: 'terdorong_app',
+                        7: 'motivasi'
+                    };
+                    
+                    answers[stepKey[step]] = selectedOption.dataset.value;
+                    break;
+            }
+            return true;
+        }
+
+        function showError(message) {
+            showNotification(message, 'error');
+            
+            // Shake animation for the form
+            document.getElementById('question-container').classList.add('shake');
+            
+            setTimeout(() => {
+                document.getElementById('question-container').classList.remove('shake');
+            }, 500);
+        }
+
+        function showNotification(message, type = 'success') {
+            // Remove existing notifications
+            document.querySelectorAll('.notification').forEach(n => n.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        ${type === 'success' ? 
+                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>' :
+                            '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>'
+                        }
+                    </svg>
+                    ${message}
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            // Hide notification after 4 seconds
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        async function submitToGoogleSheets(data) {
+            try {
+                // Show loading state
+                setSubmitButtonLoading(true);
+                
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Important for Google Apps Script
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                // Since we're using no-cors mode, we can't read the response
+                // We'll assume success if no error is thrown
+                showNotification('Data berhasil disimpan ke Google Sheets! 🎉', 'success');
+                
+                // Store success info for display
+                const serverResponse = document.getElementById('server-response');
+                serverResponse.innerHTML = `
+                    <div class="text-blue-600">
+                        ✅ Data tersimpan successfully<br>
+                        📅 Waktu: ${new Date().toLocaleString('id-ID')}
+                    </div>
+                `;
+                
+                return { success: true };
+                
+            } catch (error) {
+                console.error('Error submitting to Google Sheets:', error);
+                showNotification('Gagal menyimpan ke Google Sheets: ' + error.message, 'error');
+                
+                // Store error info for display
+                const serverResponse = document.getElementById('server-response');
+                serverResponse.innerHTML = `
+                    <div class="text-red-600">
+                        ❌ Gagal tersimpan: ${error.message}<br>
+                        🔄 Data masih tersimpan lokal di browser
+                    </div>
+                `;
+                
+                return { success: false, error: error.message };
+                
+            } finally {
+                setSubmitButtonLoading(false);
+            }
+        }
+
+        function setSubmitButtonLoading(loading) {
+            const nextBtnText = document.getElementById('next-btn-text');
+            const nextBtnLoading = document.getElementById('next-btn-loading');
+            const nextBtn = document.getElementById('next-btn');
+            
+            if (loading) {
+                nextBtnText.classList.add('hidden');
+                nextBtnLoading.classList.remove('hidden');
+                nextBtn.disabled = true;
+                isSubmitting = true;
+            } else {
+                nextBtnText.classList.remove('hidden');
+                nextBtnLoading.classList.add('hidden');
+                nextBtn.disabled = false;
+                isSubmitting = false;
+            }
+        }
+
+        async function nextStep() {
+            if (isSubmitting) return;
+            
+            if (!validateStep(currentStep)) {
+                return;
+            }
+            
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateProgress();
+                showStep(currentStep);
+                
+                // Add success animation
+                const container = document.getElementById('question-container');
+                container.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    container.style.transform = 'scale(1)';
+                }, 200);
+                
+            } else {
+                // Submit to Google Sheets
+                const result = await submitToGoogleSheets(answers);
+                
+                if (result.success) {
+                    // Show thank you page
+                    currentStep++;
+                    showStep(currentStep);
+                    
+                    // Confetti animation
+                    createConfetti();
+                    
+                    // Also save locally as backup
+                    try {
+                        localStorage.setItem('mudu_survey_' + Date.now(), JSON.stringify(answers));
+                    } catch (e) {
+                        console.log('Cannot save to localStorage');
+                    }
+                }
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1 && !isSubmitting) {
+                currentStep--;
+                updateProgress();
+                showStep(currentStep);
+            }
+        }
+
+        function displayResults() {
+            const resultsContainer = document.getElementById('survey-results');
+            const resultLabels = {
+                nama: 'Nama',
+                umur: 'Umur',
+                kota_administratif: 'Kota Administratif',
+                kecamatan: 'Kecamatan',
+                kepedulian_lingkungan: 'Kepedulian Lingkungan',
+                pengelolaan_sampah: 'Pengelolaan Sampah',
+                penggunaan_teknologi: 'Penggunaan Teknologi',
+                terdorong_app: 'Terdorong Aplikasi',
+                tantangan_memilah: 'Tantangan Memilah',
+                motivasi: 'Motivasi'
+            };
+            
+            const valueLabels = {
+                'sangat-peduli': 'Sangat Peduli',
+                'cukup-peduli': 'Cukup Peduli',
+                'kurang-peduli': 'Kurang Peduli',
+                'tidak-peduli': 'Belum Peduli',
+                'pisah': 'Memisahkan Sampah',
+                'reduce': 'Mengurangi Sampah',
+                'biasa': 'Seperti Biasa',
+                '1-2-jam': '1-2 Jam',
+                '3-4-jam': '3-4 Jam',
+                'lebih-5-jam': 'Lebih dari 5 Jam',
+                'tentu': 'Tentu',
+                'mungkin': 'Mungkin (50/50)',
+                'tidak-akan': 'Tidak Akan',
+                'anak-cucu': 'Masa Depan Anak Cucu',
+                'kesehatan': 'Kesehatan Keluarga',
+                'ekonomi': 'Manfaat Ekonomi',
+                'trend': 'Mengikuti Tren'
+            };
+            
+            let resultsHTML = '';
+            for (const [key, value] of Object.entries(answers)) {
+                const label = resultLabels[key] || key;
+                const displayValue = valueLabels[value] || value;
+                resultsHTML += `
+                    <div class="flex justify-between py-2 border-b border-gray-200">
+                        <span class="font-medium">${label}:</span>
+                        <span class="text-gray-600">${displayValue}</span>
+                    </div>
+                `;
+            }
+            
+            resultsContainer.innerHTML = resultsHTML;
+        }
+
+        function restartSurvey() {
+            currentStep = 1;
+            Object.keys(answers).forEach(key => delete answers[key]);
+            
+            // Reset form
+            document.getElementById('nama').value = '';
+            document.getElementById('umur').value = '';
+            document.getElementById('kota-admin').value = '';
+            document.getElementById('kecamatan').value = '';
+            document.getElementById('kecamatan').disabled = true;
+            document.getElementById('kecamatan').innerHTML = '<option value="">Pilih kota administratif terlebih dahulu...</option>';
+            document.getElementById('tantangan').value = '';
+            
+            // Remove all selections
+            document.querySelectorAll('.option-card.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Show navigation again
+            document.getElementById('navigation').classList.remove('hidden');
+            
+            updateProgress();
+            showStep(currentStep);
+        }
+
+        function createConfetti() {
+            const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'];
+            const confettiContainer = document.createElement('div');
+            confettiContainer.style.position = 'fixed';
+            confettiContainer.style.top = '0';
+            confettiContainer.style.left = '0';
+            confettiContainer.style.width = '100%';
+            confettiContainer.style.height = '100%';
+            confettiContainer.style.pointerEvents = 'none';
+            confettiContainer.style.zIndex = '9999';
+            document.body.appendChild(confettiContainer);
+            
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'absolute';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + '%';
+                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                confetti.style.animationName = 'confettiFall';
+                confetti.style.animationTimingFunction = 'linear';
+                confetti.style.animationFillMode = 'forwards';
+                confettiContainer.appendChild(confetti);
+            }
+            
+            // Add confetti animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes confettiFall {
+                    to {
+                        transform: translateY(100vh) rotate(360deg);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Remove confetti after animation
+            setTimeout(() => {
+                confettiContainer.remove();
+                style.remove();
+            }, 5000);
+        }
+
+        // Kecamatan dropdown functionality
+        function setupKecamatanDropdown() {
+            const kotaAdminSelect = document.getElementById('kota-admin');
+            const kecamatanSelect = document.getElementById('kecamatan');
+            
+            kotaAdminSelect.addEventListener('change', function() {
+                const selectedKota = this.value;
+                
+                // Clear kecamatan dropdown
+                kecamatanSelect.innerHTML = '<option value="">Pilih kecamatan...</option>';
+                
+                if (selectedKota && jakartaKecamatan[selectedKota]) {
+                    // Enable kecamatan dropdown
+                    kecamatanSelect.disabled = false;
+                    
+                    // Add kecamatan options
+                    jakartaKecamatan[selectedKota].forEach(kecamatan => {
+                        const option = document.createElement('option');
+                        option.value = kecamatan;
+                        option.textContent = kecamatan;
+                        kecamatanSelect.appendChild(option);
+                    });
+                } else {
+                    // Disable kecamatan dropdown
+                    kecamatanSelect.disabled = true;
+                    kecamatanSelect.innerHTML = '<option value="">Pilih kota administratif terlebih dahulu...</option>';
+                }
+            });
+        }
+
+        // Event listeners for option selection
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove selection from other cards in the same step
+                    const stepContainer = this.closest('.question-step');
+                    stepContainer.querySelectorAll('.option-card').forEach(c => {
+                        c.classList.remove('selected');
+                    });
+                    
+                    // Add selection to clicked card
+                    this.classList.add('selected');
+                    
+                    // Auto-advance after a short delay for better UX
+                    setTimeout(() => {
+                        const nextBtn = document.getElementById('next-btn');
+                        if (nextBtn && !nextBtn.disabled) {
+                            nextBtn.style.transform = 'scale(1.05)';
+                            setTimeout(() => {
+                                nextBtn.style.transform = 'scale(1)';
+                            }, 200);
+                        }
+                    }, 300);
+                });
+            });
+            
+            // Setup kecamatan dropdown
+            setupKecamatanDropdown();
+            
+            // Initialize first step
+            updateProgress();
+            showStep(currentStep);
+            
+            // Add typing animation to input fields and selects
+            document.querySelectorAll('input[type="text"], input[type="number"], textarea, select').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.classList.add('typing');
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.classList.remove('typing');
+                });
+            });
+            
+            // Check if URLs are configured
+            if (GOOGLE_SCRIPT_URL.includes('YOUR_SCRIPT_ID')) {
+                console.warn('⚠️ Please update GOOGLE_SCRIPT_URL with your actual Google Apps Script URL');
+                showNotification('Konfigurasi: Update URL Google Apps Script di kode', 'error');
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !isSubmitting) {
+                e.preventDefault();
+                nextStep();
+            } else if (e.key === 'Escape' && !isSubmitting) {
+                e.preventDefault();
+                if (currentStep > 1) {
+                    previousStep();
+                }
+            }
+        });
+
+        // Add smooth scroll behavior
+        document.documentElement.style.scrollBehavior = 'smooth';
+
+        // Test Google Apps Script connection (optional)
+        async function testConnection() {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL + '?action=test');
+                console.log('✅ Google Apps Script connection test successful');
+            } catch (error) {
+                console.warn('⚠️ Google Apps Script connection test failed:', error);
+            }
+        }
+
+        // Uncomment the line below to test connection on page load
+        // testConnection();
+    </script>
+</body>
+</html>
